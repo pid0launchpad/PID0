@@ -1,0 +1,31 @@
+{
+  "agentId": "agent://pid0.dual-launcher",
+  "agentName": "PID0 Dual Launch Agent",
+  "endpoint": "https://pid0.fun/agents/dual-launcher",
+  "pairToken": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
+  "creatorTaxBps": 200,
+  "initialBuy": "0",
+  "buybackEnabled": false,
+  "launches": [
+    {
+      "name": "FIRST TOKEN NAME",
+      "symbol": "FIRST",
+      "description": "Replace this with the first token description.",
+      "logo": "",
+      "socials": {
+        "twitter": "",
+        "website": "https://pid0.fun/"
+      }
+    },
+    {
+      "name": "SECOND TOKEN NAME",
+      "symbol": "SECOND",
+      "description": "Replace this with the second token description.",
+      "logo": "",
+      "socials": {
+        "twitter": "",
+        "website": "https://pid0.fun/"
+      }
+    }
+  ]
+}
