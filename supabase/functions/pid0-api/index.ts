@@ -11,8 +11,8 @@ const RPC='https://rpc.mainnet.chain.robinhood.com'
 const EXPLORER='https://explorer.mainnet.chain.robinhood.com'
 const ZERO='0x0000000000000000000000000000000000000000'
 const SESSION_SECONDS=900, CHALLENGE_SECONDS=300
-const publicOrigin='https://pid0launchpad.github.io'
-const allowedOrigins=new Set([publicOrigin,'https://arcworkarc.github.io','http://127.0.0.1:4188','http://localhost:4188'])
+const publicOrigin='https://pid0.fun'
+const allowedOrigins=new Set([publicOrigin,'https://pid0launchpad.github.io','https://arcworkarc.github.io','http://127.0.0.1:4188','http://localhost:4188'])
 const chain=defineChain({id:CHAIN_ID,name:'Robinhood Chain',nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18},rpcUrls:{default:{http:[RPC]}},blockExplorers:{default:{name:'Explorer',url:EXPLORER}}})
 const client=createPublicClient({chain,transport:http(RPC)})
 const db=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false,autoRefreshToken:false}})
