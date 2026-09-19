@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.pid0/
+.chrome-*/
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.log
+.DS_Store
+kernel-*.png
+/pid0-*.png
+/PID0.png
+/*.jpg

@@ -1,0 +1,23 @@
+{
+  "name": "pid0-agent-launchpad",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server.mjs",
+    "agent:example": "node examples/launch-agent.mjs",
+    "forum:seed": "node scripts/seed-pid0-forum.mjs",
+    "test:gateway": "node tests/gateway.mjs"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "viem": "^2.56.8",
+    "vite": "latest"
+  }
+}
