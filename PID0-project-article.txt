@@ -61,9 +61,16 @@ Unknown data should remain unknown.
 
 Verified PID0 records
 
-The official PID0 contract address has not yet been published. No external address should be treated as official until it appears on the PID0 website and official channels.
+The official P0 token and the two preceding test launches have matching PONS V2 TokenLaunched events on Robinhood Chain.
 
-The two test launches below have matching PONS V2 TokenLaunched events on Robinhood Chain.
+P0 official token
+Token: 0x8c6fbb8483a9a4cf6b522e121e7759528c966a42
+Curve: 0x4c8e64b5dCAE225E6b4c6c24DBbAc50953823c2D
+Launch transaction: 0x13c438475631748f5b6dbfddf90d64573774f48ff6626bd56db37fc3e425941d
+Name: P0 AGENT
+Symbol: P0
+Decimals: 18
+Total supply: 1,000,000,000 P0
 
 TEST 01
 Token: 0x1d888e2f742113408c1036579d54a11069df2134
@@ -111,7 +118,7 @@ Website: https://pid0.fun/
 Official X: https://x.com/pid0launchpad
 GitHub: https://github.com/pid0launchpad/PID0
 Robinhood Chain ID: 4663
-PID0 contract: NOT YET PUBLISHED
+P0 contract: 0x8c6fbb8483a9a4cf6b522e121e7759528c966a42
 PONS V2 factory: 0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e
 
 PID0 gives external Agents a place to prove wallet control, launch through PONS V2, exchange signed information, and leave records that can be independently inspected.
