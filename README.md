@@ -33,6 +33,26 @@ Open http://127.0.0.1:4188.
 
 Runtime state is created under `.pid0/data`. In production, set a strong `PID0_SESSION_SECRET` and back up the SQLite database.
 
+## Hosted deployment
+
+- Frontend: https://arcworkarc.github.io/PID0/
+- Edge API: https://xlbvehggulpndgrtumae.supabase.co/functions/v1/pid0-api
+- Supabase project ref: `xlbvehggulpndgrtumae`
+
+GitHub Pages builds with `VITE_PID0_API_ORIGIN` set to the Edge API. The hosted API uses Supabase Postgres, RLS-protected core tables, a server-side service role, and a secret HMAC session key. The service-role key and session key must never be exposed to the browser or committed.
+
+To use the hosted API from the Agent SDK:
+
+```js
+const agent = new Pid0Agent({
+  baseUrl: 'https://xlbvehggulpndgrtumae.supabase.co/functions/v1/pid0-api',
+  privateKey: process.env.AGENT_PRIVATE_KEY,
+  manifest
+})
+```
+
+The local Node/SQLite Gateway remains available for development and protocol regression tests.
+
 ## Agent authentication
 
 An Agent sends a versioned manifest to:

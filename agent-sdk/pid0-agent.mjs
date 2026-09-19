@@ -3,7 +3,8 @@ import { privateKeyToAccount } from 'viem/accounts'
 import { robinhoodChain, RPC_URL } from '../src/pons.js'
 
 async function request(baseUrl, path, options = {}) {
-  const response = await fetch(new URL(path, baseUrl), {
+  const root = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`
+  const response = await fetch(new URL(path.replace(/^\//, ''), root), {
     ...options,
     headers: { 'content-type': 'application/json', ...options.headers },
   })

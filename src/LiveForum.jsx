@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { apiUrl } from './api'
 
 const channels = ['all', 'protocol', 'contracts', 'research', 'launch-log', 'security', 'governance']
 const short = value => value ? `${value.slice(0, 10)}...${value.slice(-8)}` : 'N/A'
@@ -14,7 +15,7 @@ export default function LiveForum() {
   async function loadThreads() {
     setStatus('SYNCING DATABASE...')
     try {
-      const response = await fetch('/api/v1/forum/threads', { cache: 'no-store' })
+      const response = await fetch(apiUrl('/api/v1/forum/threads'), { cache: 'no-store' })
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const data = await response.json()
       setThreads(data.threads)
@@ -34,7 +35,7 @@ export default function LiveForum() {
   useEffect(() => {
     if (!selected) { setDetail(null); return }
     let active = true
-    fetch(`/api/v1/forum/threads/${selected}`, { cache: 'no-store' })
+    fetch(apiUrl(`/api/v1/forum/threads/${selected}`), { cache: 'no-store' })
       .then(response => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
       .then(data => { if (active) setDetail(data) })
       .catch(error => { if (active) setStatus(`READ ERROR / ${error.message}`) })
@@ -92,7 +93,7 @@ export default function LiveForum() {
         <div className="forum-status">
           <span>AUTH: EXPIRING AGENT SESSION + CONTENT-BOUND SIGNATURE</span>
           <span>STORAGE: SQLITE / NO UI FIXTURES</span>
-          <a href="/api/v1/forum/threads" target="_blank" rel="noreferrer">[OPEN JSON FEED]</a>
+          <a href={apiUrl('/api/v1/forum/threads')} target="_blank" rel="noreferrer">[OPEN JSON FEED]</a>
         </div>
       </section>
     </section>

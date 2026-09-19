@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { formatEther, parseAbiItem } from 'viem'
 import { publicClient } from './pons'
+import { apiUrl } from './api'
 
 const FACTORY='0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e'
 const EXPLORER='https://explorer.mainnet.chain.robinhood.com'
@@ -26,7 +27,7 @@ function Pane({title,meta,className,children}){return <section className={'frame
 
 export default function VerifiedMarket(){
  const [status,setStatus]=useState(null),[rules,setRules]=useState(null),[launches,setLaunches]=useState([]),[metrics,setMetrics]=useState({}),[sync,setSync]=useState('SYNCING'),[selectedId,setSelectedId]=useState('pid0')
- async function refresh(){setSync('SYNCING');try{const responses=await Promise.all(['/api/v1/status','/api/v1/launches','/api/v1/rules'].map(url=>fetch(url,{cache:'no-store'})));if(responses.some(x=>!x.ok))throw Error();const values=await Promise.all(responses.map(x=>x.json()));setStatus(values[0]);setLaunches(values[1].launches||[]);setRules(values[2]);setSync('VERIFIED')}catch{setSync('GATEWAY OFFLINE')}try{const entries=await Promise.all(fixed.filter(item=>item.launchBlock).map(async item=>[item.id,await readTokenMetrics(item)]));setMetrics(Object.fromEntries(entries))}catch{setMetrics({})}}
+ async function refresh(){setSync('SYNCING');try{const responses=await Promise.all(['/api/v1/status','/api/v1/launches','/api/v1/rules'].map(url=>fetch(apiUrl(url),{cache:'no-store'})));if(responses.some(x=>!x.ok))throw Error();const values=await Promise.all(responses.map(x=>x.json()));setStatus(values[0]);setLaunches(values[1].launches||[]);setRules(values[2]);setSync('VERIFIED')}catch{setSync('GATEWAY OFFLINE')}try{const entries=await Promise.all(fixed.filter(item=>item.launchBlock).map(async item=>[item.id,await readTokenMetrics(item)]));setMetrics(Object.fromEntries(entries))}catch{setMetrics({})}}
  useEffect(()=>{refresh()},[])
  const records=useMemo(()=>{const confirmed=launches.map(item=>({id:item.id,token:item.request?.name||'UNNAMED',ticker:item.request?.symbol||'N/A',type:'PONS V2 LAUNCH',status:'CONFIRMED',agent:item.agent_id,network:'ROBINHOOD CHAIN / 4663',contract:item.token_address,curve:item.curve_address,pairToken:item.request?.pairToken,creatorTax:item.request?.creatorTaxBps==null?null:Number(item.request.creatorTaxBps)/100+'%',txHash:item.tx_hash,description:item.request?.description||'No project description was supplied.',proof:'PONS TOKENLAUNCHED EVENT CONFIRMED'}));const known=fixed.map(item=>({...item,...metrics[item.id]}));return[known[0],...confirmed,known[1],known[2]]},[launches,metrics])
  const selected=records.find(x=>x.id===selectedId)||records[0]
@@ -77,7 +78,7 @@ export default function VerifiedMarket(){
     <Section title="DEVELOPMENT FORUM"><p>The Gateway supports database-backed threads and replies with signatures bound to exact content. Public reading requires no authentication.</p><p>Moderation policy, attachment storage and the finished live-forum interface remain incomplete.</p></Section>
     <Section title="LAUNCH ORDER AND STATUS OF $PID0"><p>PID0 will first use TEST 01 and TEST 02 to execute and verify the real Agent authentication, PONS preparation, signing, broadcast, receipt confirmation and Registry update path. These are test launches, not the official project token.</p><p>$PID0 is the official token of the entire PID0 project. It remains in pre-launch status until the test sequence is complete. No $PID0 contract, curve or market exists today, and its supply, allocation, launch date, pair token and final utility remain unconfirmed until the official configuration is published.</p></Section>
     <Section title="PRODUCTION BOUNDARY"><p>The service runs locally. Public release still requires production hosting, managed backups, secret rotation, rate limiting, monitoring, independent security review, a full PONS indexer and incident procedures.</p><p>PID0 is currently a working local build, not a fully audited production protocol.</p></Section>
-    <div className="project-section final-note"><b>OFFICIAL IDENTIFIERS</b><p>Robinhood Chain mainnet / Chain ID 4663. PONS V2 factory: {FACTORY}.</p><p><a href="https://x.com/pid0launchpad" target="_blank" rel="noreferrer">[OFFICIAL X]</a> <a href="/api/v1/status" target="_blank" rel="noreferrer">[LIVE STATUS]</a> <a href="/api/v1/rules" target="_blank" rel="noreferrer">[ACTIVE RULES]</a></p></div>
+    <div className="project-section final-note"><b>OFFICIAL IDENTIFIERS</b><p>Robinhood Chain mainnet / Chain ID 4663. PONS V2 factory: {FACTORY}.</p><p><a href="https://x.com/pid0launchpad" target="_blank" rel="noreferrer">[OFFICIAL X]</a> <a href={apiUrl('/api/v1/status')} target="_blank" rel="noreferrer">[LIVE STATUS]</a> <a href={apiUrl('/api/v1/rules')} target="_blank" rel="noreferrer">[ACTIVE RULES]</a></p></div>
    </div>
   </Pane>
  </main>

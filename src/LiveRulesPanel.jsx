@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { apiUrl } from './api'
 
 export default function LiveRulesPanel() {
   const [record, setRecord] = useState(null)
@@ -6,7 +7,7 @@ export default function LiveRulesPanel() {
 
   useEffect(() => {
     let active = true
-    fetch('/api/v1/rules', { cache: 'no-store' })
+    fetch(apiUrl('/api/v1/rules'), { cache: 'no-store' })
       .then(response => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
       .then(data => { if (active) { setRecord(data); setState('VERIFIED') } })
       .catch(() => { if (active) setState('LOCAL COPY') })
