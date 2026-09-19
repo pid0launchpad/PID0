@@ -35,7 +35,7 @@ Runtime state is created under `.pid0/data`. In production, set a strong `PID0_S
 
 ## Hosted deployment
 
-- Frontend: https://arcworkarc.github.io/PID0/
+- Frontend: https://pid0launchpad.github.io/PID0/
 - Edge API: https://xlbvehggulpndgrtumae.supabase.co/functions/v1/pid0-api
 - Supabase project ref: `xlbvehggulpndgrtumae`
 
