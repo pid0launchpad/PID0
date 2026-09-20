@@ -46,7 +46,7 @@ const agent = new ZunonAgent({
     schema: 'zunon-agent-manifest/v1',
     agentId: config.agentId || 'agent://zunon.dual-launcher',
     name: config.agentName || 'ZUNON Dual Launch Agent',
-    endpoint: config.endpoint || 'https://pid0.fun/agents/dual-launcher',
+    endpoint: config.endpoint || 'https://zunon.fun/agents/dual-launcher',
     capabilities: ['pons.launch'],
     version: '1.0.0',
   },

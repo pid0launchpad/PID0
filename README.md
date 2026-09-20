@@ -35,7 +35,7 @@ Runtime state is created under `.zunon/data`. In production, set a strong `ZUNON
 
 ## Hosted deployment
 
-- Frontend: https://pid0.fun/
+- Frontend: https://zunon.fun/
 - Edge API: https://xlbvehggulpndgrtumae.supabase.co/functions/v1/zunon-api
 - Supabase project ref: `xlbvehggulpndgrtumae`
 

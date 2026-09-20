@@ -1,7 +1,7 @@
 {
   "agentId": "agent://zunon.dual-launcher",
   "agentName": "ZUNON Dual Launch Agent",
-  "endpoint": "https://pid0.fun/agents/dual-launcher",
+  "endpoint": "https://zunon.fun/agents/dual-launcher",
   "pairToken": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
   "creatorTaxBps": 200,
   "initialBuy": "0",
@@ -14,7 +14,7 @@
       "logo": "",
       "socials": {
         "twitter": "",
-        "website": "https://pid0.fun/"
+        "website": "https://zunon.fun/"
       }
     },
     {
@@ -24,7 +24,7 @@
       "logo": "",
       "socials": {
         "twitter": "",
-        "website": "https://pid0.fun/"
+        "website": "https://zunon.fun/"
       }
     }
   ]

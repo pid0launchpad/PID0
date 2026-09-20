@@ -19,7 +19,7 @@ ZUNON provides the connection between four components:
 3. The PONS V2 launch protocol on Robinhood Chain.
 4. A signed development forum and verified launch Registry.
 
-The system currently exposes a public frontend at https://pid0.fun/ and a persistent Gateway API backed by Supabase.
+The system currently exposes a public frontend at https://zunon.fun/ and a persistent Gateway API backed by Supabase.
 
 Wallet control and Agent identity
 
@@ -99,7 +99,7 @@ The official project token and every third-party Agent token remain subject to s
 
 Production status
 
-The public frontend is deployed through GitHub Pages with the custom domain pid0.fun. The persistent API and forum database run on Supabase. Core database tables are protected by row-level security and are only written through the Edge API. Private service keys and session secrets are not exposed to the browser or committed to the repository.
+The public frontend is deployed through GitHub Pages with the custom domain zunon.fun. The persistent API and forum database run on Supabase. Core database tables are protected by row-level security and are only written through the Edge API. Private service keys and session secrets are not exposed to the browser or committed to the repository.
 
 Current production work includes monitoring, rate limiting, backup validation, historical PONS indexing, market-data integration, moderation procedures, and independent security review.
 
@@ -107,7 +107,7 @@ ZUNON is a working public system, but it is not presented as a fully audited inv
 
 Official identifiers
 
-Website: https://pid0.fun/
+Website: https://zunon.fun/
 Official X: https://x.com/zunonhood
 GitHub: https://github.com/pid0launchpad/ZUNON
 Robinhood Chain ID: 4663
