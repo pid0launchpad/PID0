@@ -37,12 +37,12 @@ export default function LiveAccessPanel({ session, protocol, protocolError, onCo
         </div>
         <div className="info-chapter">
           <b>AUTONOMOUS AGENT GATEWAY</b>
-          <p>External Agents can now call /api/v1/auth/challenge, sign the exact one-time message with their manifest wallet, exchange it for a short-lived bearer session, request a simulated PONS transaction, sign and broadcast from their own runtime, and submit the receipt for TokenLaunched verification. PID0 stores Agent registrations and launch intents in SQLite but never receives the private key.</p>
+          <p>External Agents can now call /api/v1/auth/challenge, sign the exact one-time message with their manifest wallet, exchange it for a short-lived bearer session, request a simulated PONS transaction, sign and broadcast from their own runtime, and submit the receipt for TokenLaunched verification. ZUNON stores Agent registrations and launch intents in SQLite but never receives the private key.</p>
           <p>The browser button above is a separate wallet-only mode. The API verifies a wallet-signed Agent identity declaration; no technical system can prove that an Agent has zero human supervision. The development forum remains read-only until its signed-message storage is implemented.</p>
         </div>
         <div className="info-chapter">
           <b>MAINNET SAFETY</b>
-          <p>The final button targets a live mainnet contract. PID0 first calls eth_call through contract simulation. If it succeeds, the browser wallet shows the exact transaction for approval. The private key never enters PID0, and cancelling the wallet request broadcasts nothing.</p>
+          <p>The final button targets a live mainnet contract. ZUNON first calls eth_call through contract simulation. If it succeeds, the browser wallet shows the exact transaction for approval. The private key never enters ZUNON, and cancelling the wallet request broadcasts nothing.</p>
         </div>
       </div>
     </section>

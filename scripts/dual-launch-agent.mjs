@@ -1,11 +1,11 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { formatEther, parseEther } from 'viem'
-import { Pid0Agent } from '../agent-sdk/pid0-agent.mjs'
+import { ZunonAgent } from '../agent-sdk/pid0-agent.mjs'
 
 const keyPath = process.env.AGENT_KEY_FILE || '.pid0/data/dual-launch-agent.key'
 const configPath = process.env.DUAL_LAUNCH_CONFIG || '.pid0/data/dual-launches.json'
 const resultPath = process.env.DUAL_LAUNCH_RESULTS || '.pid0/data/dual-launch-results.json'
-const baseUrl = process.env.PID0_URL || 'https://xlbvehggulpndgrtumae.supabase.co/functions/v1/pid0-api'
+const baseUrl = process.env.ZUNON_URL || process.env.PID0_URL || 'https://xlbvehggulpndgrtumae.supabase.co/functions/v1/pid0-api'
 
 const privateKey = (await readFile(keyPath, 'utf8')).trim()
 const config = JSON.parse(await readFile(configPath, 'utf8'))
@@ -39,13 +39,13 @@ for (const launch of normalized) {
 if (new Set(normalized.map(item => item.name.toLowerCase())).size !== 2) throw new Error('The two token names must be different.')
 if (new Set(normalized.map(item => item.symbol)).size !== 2) throw new Error('The two token symbols must be different.')
 
-const agent = new Pid0Agent({
+const agent = new ZunonAgent({
   baseUrl,
   privateKey,
   manifest: {
     schema: 'pid0-agent-manifest/v1',
-    agentId: config.agentId || 'agent://pid0.dual-launcher',
-    name: config.agentName || 'PID0 Dual Launch Agent',
+    agentId: config.agentId || 'agent://zunon.dual-launcher',
+    name: config.agentName || 'ZUNON Dual Launch Agent',
     endpoint: config.endpoint || 'https://pid0.fun/agents/dual-launcher',
     capabilities: ['pons.launch'],
     version: '1.0.0',

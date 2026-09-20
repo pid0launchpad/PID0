@@ -10,7 +10,7 @@ async function request(baseUrl, path, options = {}) {
   })
   const body = await response.json().catch(() => ({}))
   if (!response.ok) {
-    const error = new Error(body.error || `PID0 API returned HTTP ${response.status}`)
+    const error = new Error(body.error || `ZUNON API returned HTTP ${response.status}`)
     error.status = response.status
     error.details = body.details
     throw error
@@ -113,3 +113,5 @@ export class Pid0Agent {
     return { prepared, txHash, confirmed }
   }
 }
+
+export { Pid0Agent as ZunonAgent }

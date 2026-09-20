@@ -18,7 +18,7 @@
 @media(max-width:820px){.triple-workspace{height:auto;min-height:0;grid-template-columns:1fr 1fr}.triple-workspace .list-pane,.triple-workspace .inspect-pane{height:500px}.triple-workspace .project-pane{grid-column:1/-1;height:410px}.project-proof{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:620px){.triple-workspace{display:block}.triple-workspace .list-pane,.triple-workspace .inspect-pane,.triple-workspace .project-pane{height:440px}.triple-workspace .list-pane{height:500px}.triple-workspace .project-pane{height:430px}}
 
-/* Main terminal order: selected token / issued tokens / PID0 system profile */
+/* Main terminal order: selected token / issued tokens / ZUNON system profile */
 .triple-workspace{grid-template-columns:minmax(285px,.68fr) minmax(430px,1.12fr) minmax(350px,.94fr)}
 .triple-workspace .project-inspect{order:1}.triple-workspace .list-pane{order:2}.triple-workspace .project-pane{order:3}
 .triple-workspace .project-inspect .project-title{display:flex;padding-top:7px;padding-bottom:7px}.triple-workspace .project-inspect .project-title .token-glyph{width:39px;height:39px;font-size:13px}.triple-workspace .project-inspect .project-title h2{font-size:15px}.triple-workspace .project-inspect .project-title p{font-size:7px}
@@ -44,7 +44,7 @@
 .verified-action{display:block;margin:10px 5px 0;background:#00aaa9;color:#000;padding:7px;text-align:center;text-decoration:none;font-weight:700}
 .verified-inspect:after{display:none!important}
 .verified-inspect .description{display:block!important}
-.verified-inspect .official-pid0-logo{color:transparent;border-color:#00ffff;background:#0000d0 url('/pid0-logo.png') center/172% no-repeat;image-rendering:auto}
+.verified-inspect .official-pid0-logo{color:transparent;border-color:#00ffff;background:#0000d0 url('/zunon-logo.png') center/172% no-repeat;image-rendering:auto}
 .verified-agent-list>button.official-token-row,.verified-agent-list>button.official-token-row.selected,.verified-agent-list>button.official-token-row:hover{border-top:1px solid #ffff55;border-bottom:1px solid #ffff55;background:#00106b;color:#fff}.verified-agent-list>button.official-token-row:hover{background:#001b88;box-shadow:inset 0 0 0 1px #00ffff}.verified-agent-list>button.official-token-row b{color:#ffff55}.verified-agent-list>button.official-token-row span{color:#fff}.verified-agent-list>button.official-token-row span:nth-child(2){font-weight:700}.verified-agent-list>button.official-token-row em,.verified-agent-list>button.official-token-row.selected em,.verified-agent-list>button.official-token-row:hover em{display:inline-block;margin-left:6px;border:1px solid #ffff55;color:#ffff55;padding:1px 4px;font-style:normal;font-size:6px;vertical-align:middle}.verified-mark,.verified-agent-list>button.official-token-row.selected .verified-mark,.verified-agent-list>button.official-token-row:hover .verified-mark{display:inline-grid;place-items:center;width:14px;height:14px;margin-left:5px;border-radius:50%;background:#00ffff;color:#000;font-style:normal;font-size:9px;font-weight:900;vertical-align:middle}
 .mono .verified-inspect .official-pid0-logo{filter:grayscale(1) sepia(1) hue-rotate(70deg) saturate(5);border-color:#38d75f}.mono .verified-agent-list>button.official-token-row{border-color:#b8ffc8}
 .verified-project .pid0-summary{grid-template-columns:1fr 1fr}
@@ -100,9 +100,9 @@
 @media(max-width:1000px){.bbs-detailed .bbs-layout{grid-template-columns:1fr .85fr}.bbs-nodebar span:nth-child(3){display:none}.bbs-detailed .thread-list .bbs-head,.bbs-detailed .thread-list>button{grid-template-columns:52px 72px 92px 1fr 30px}.bbs-detailed .thread-list .bbs-head span:last-child,.bbs-detailed .thread-list>button>*:last-child{display:none}.bbs-detailed .forum-status span:nth-child(2){display:none}}
 @media(max-width:700px){.detailed-forum{height:850px}.bbs-nodebar{gap:8px}.bbs-nodebar span{display:none}.bbs-channelbar{height:58px;flex-wrap:wrap}.bbs-detailed .bbs-layout{height:700px;display:block}.bbs-detailed .thread-list{height:320px}.bbs-detailed .thread-reader{height:380px;border-top:1px solid #ff6ca8}.bbs-detailed .thread-list .bbs-head,.bbs-detailed .thread-list>button{grid-template-columns:48px 72px 1fr 30px}.bbs-detailed .thread-list .bbs-head span:nth-child(3),.bbs-detailed .thread-list>button>*:nth-child(3){display:none}.bbs-detailed .thread-reader>footer{position:absolute;width:auto;margin:0}.bbs-detailed .forum-status{bottom:4px}}
 
-/* Official PID0 mark */
-.app-title>span:first-child{width:20px;height:20px;box-sizing:border-box;padding:0;margin-right:7px;color:transparent;background:#0000d0 url('/pid0-logo.png') center/185% no-repeat;image-rendering:auto}
-.pid0-profile .token-glyph{color:transparent;border-color:#00ffff;background:#0000d0 url('/pid0-logo.png') center/172% no-repeat;image-rendering:auto}
+/* Official ZUNON mark */
+.app-title>span:first-child{width:20px;height:20px;box-sizing:border-box;padding:0;margin-right:7px;color:transparent;background:#0000d0 url('/zunon-logo.png') center/185% no-repeat;image-rendering:auto}
+.pid0-profile .token-glyph{color:transparent;border-color:#00ffff;background:#0000d0 url('/zunon-logo.png') center/172% no-repeat;image-rendering:auto}
 .mono .app-title>span:first-child,.mono .pid0-profile .token-glyph{filter:grayscale(1) sepia(1) hue-rotate(70deg) saturate(5)}
 .real-token-list .market-controls>b{display:block;color:#ffff55}.real-token-list .market-controls button:last-of-type{display:block}.real-summary span:nth-child(3){display:flex}.real-inspect .project-title{display:flex!important}.real-inspect>.description{display:block!important;margin:7px 5px!important;font-size:9px;line-height:1.5}.real-inspect dl{margin-top:6px!important}.real-inspect dl dt,.real-inspect dl dd{display:block!important}.real-inspect .execute:disabled{opacity:1;cursor:not-allowed;background:#777;color:#111}
 .triple-workspace .real-token-list .market-controls button:last-of-type,.triple-workspace .real-token-list .market-controls>b{display:block}.triple-workspace .real-token-list .market-controls>b{margin-left:auto}

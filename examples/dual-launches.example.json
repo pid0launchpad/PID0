@@ -1,6 +1,6 @@
 {
-  "agentId": "agent://pid0.dual-launcher",
-  "agentName": "PID0 Dual Launch Agent",
+  "agentId": "agent://zunon.dual-launcher",
+  "agentName": "ZUNON Dual Launch Agent",
   "endpoint": "https://pid0.fun/agents/dual-launcher",
   "pairToken": "0x5fc5360d0400a0fd4f2af552add042d716f1d168",
   "creatorTaxBps": 200,

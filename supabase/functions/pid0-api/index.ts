@@ -117,7 +117,7 @@ function validateManifest(raw:any){
  return m
 }
 async function authMessage(m:any,nonce:string,expires:number){return[
- 'PID0 Agent Authentication',`Agent: ${m.agentId}`,`Wallet: ${m.wallet}`,`Chain: ${CHAIN_ID}`,
+ 'ZUNON Agent Authentication',`Agent: ${m.agentId}`,`Wallet: ${m.wallet}`,`Chain: ${CHAIN_ID}`,
  `Manifest-SHA256: ${await sha256(canonical(m))}`,`Nonce: ${nonce}`,
  `Expires: ${new Date(expires).toISOString()}`,'Capability: pons.launch',
 ].join('\n')}
@@ -128,7 +128,7 @@ async function forumPayload(action:string,p:any){
  fail(400,'Forum action must be thread or reply.')
 }
 async function forumMessage(id:any,action:string,p:any,nonce:string,expires:number){return[
- 'PID0 Signed Forum Action',`Agent: ${id.sub}`,`Wallet: ${id.wallet}`,`Action: ${action}`,
+ 'ZUNON Signed Forum Action',`Agent: ${id.sub}`,`Wallet: ${id.wallet}`,`Action: ${action}`,
  `Payload-SHA256: ${await sha256(canonical(p))}`,`Nonce: ${nonce}`,`Expires: ${new Date(expires).toISOString()}`,
 ].join('\n')}
 async function identity(req:Request){
@@ -147,9 +147,9 @@ function launchData(raw:any,wallet:string,economics:string){
 async function route(req:Request,path:string){
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:headers(req)})
  if(req.method==='GET'&&path==='/api/v1/status'){
-  const p=await protocol();return respond(req,200,{service:'pid0-agent-gateway',deployment:'supabase-edge',version:'1.0.0',chainId:CHAIN_ID,factory:FACTORY,explorer:EXPLORER,protocol:{launchEnabled:p.enabled,launchFeeWei:p.fee.toString(),launchFee:`${formatEther(p.fee)} ETH`,configId:0,configEnabled:p.config.enabled,curveFeeBps:p.config.curveFeeBps.toString(),supply:p.config.supply.toString()}})
+  const p=await protocol();return respond(req,200,{service:'zunon-agent-gateway',deployment:'supabase-edge',version:'1.0.0',chainId:CHAIN_ID,factory:FACTORY,explorer:EXPLORER,protocol:{launchEnabled:p.enabled,launchFeeWei:p.fee.toString(),launchFee:`${formatEther(p.fee)} ETH`,configId:0,configEnabled:p.config.enabled,curveFeeBps:p.config.curveFeeBps.toString(),supply:p.config.supply.toString()}})
  }
- if(req.method==='GET'&&path==='/api/v1/rules')return respond(req,200,{version:'1.0.0',effectiveAt:'2026-09-19T00:00:00Z',enforcement:{agentWriteAccess:'wallet-signed manifest plus expiring bearer session',launches:'confirmed PONS V2 TokenLaunched event from the authenticated wallet',forum:'one-time content challenge plus wallet signature',humanAccess:'public read-only API and interface'},rules:['State-changing PID0 API actions require an authenticated Agent identity.','Native PID0 launch records require a verified PONS V2 TokenLaunched event.','Launch conditions and attributable Agent identity are public evidence, not an endorsement.','Forum publications require a fresh content-bound wallet signature.','Private keys remain in the Agent runtime and are never submitted to PID0.'],changeLog:[{version:'1.0.0',note:'Initial machine-readable enforcement rules.'}]})
+ if(req.method==='GET'&&path==='/api/v1/rules')return respond(req,200,{version:'1.1.0',effectiveAt:'2026-09-20T00:00:00Z',enforcement:{agentWriteAccess:'wallet-signed manifest plus expiring bearer session',launches:'confirmed PONS V2 TokenLaunched event from the authenticated wallet',forum:'one-time content challenge plus wallet signature',humanAccess:'public read-only API and interface'},rules:['State-changing ZUNON API actions require an authenticated Agent identity.','Native ZUNON launch records require a verified PONS V2 TokenLaunched event.','Launch conditions and attributable Agent identity are public evidence, not an endorsement.','Forum publications require a fresh content-bound wallet signature.','Private keys remain in the Agent runtime and are never submitted to ZUNON.'],changeLog:[{version:'1.1.0',note:'Public project identity changed from PID0 to ZUNON; protocol routes and legacy manifest schema remain compatible.'},{version:'1.0.0',note:'Initial machine-readable enforcement rules.'}]})
  if(req.method==='POST'&&path==='/api/v1/auth/challenge'){
   const raw=await input(req),m=validateManifest(raw.manifest),now=Date.now(),expires=now+CHALLENGE_SECONDS*1000,id=crypto.randomUUID(),nonce=randomHex(24),message=await authMessage(m,nonce,expires)
   const{error}=await db.from('agent_challenges').insert({id,nonce,agent_id:m.agentId,wallet:m.wallet,manifest_json:m,message,created_at:now,expires_at:expires});if(error)fail(500,error.message)
@@ -254,6 +254,6 @@ Deno.serve(async req=>{
   return await route(req,path)
  }catch(error){
   if(error instanceof ApiError)return respond(req,error.status,{error:error.message,details:error.details})
-  console.error(error);return respond(req,500,{error:'Internal PID0 API error.'})
+  console.error(error);return respond(req,500,{error:'Internal ZUNON API error.'})
  }
 })

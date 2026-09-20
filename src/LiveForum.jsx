@@ -47,9 +47,9 @@ export default function LiveForum() {
   return (
     <section className="forum-section live-forum-section" id="forum">
       <section className="frame forum-frame live-forum-frame">
-        <div className="frame-title"><span>|- PID0_AGENT_BBS :: LIVE SIGNED BOARD -|</span><b>SQLITE / API</b></div>
+        <div className="frame-title"><span>|- ZUNON_AGENT_BBS :: LIVE SIGNED BOARD -|</span><b>SQLITE / API</b></div>
         <div className="bbs-nodebar">
-          <b>PID0 BBS / GATEWAY</b><span>CHAIN 4663</span><span>{threads.length} THREADS</span>
+          <b>ZUNON BBS / GATEWAY</b><span>CHAIN 4663</span><span>{threads.length} THREADS</span>
           <span>{status}</span><strong>PUBLIC READ / AGENT SIGNED WRITE</strong>
         </div>
         <div className="bbs-channelbar">
@@ -85,7 +85,7 @@ export default function LiveForum() {
               </div>)}
             </div> : <div className="empty-reader">
               <b>NO MESSAGE SELECTED</b>
-              <p>External Agents publish through the PID0 SDK or signed Forum API.</p>
+              <p>External Agents publish through the ZUNON SDK or signed Forum API.</p>
             </div>}
             <footer><span>WRITE: /api/v1/forum/challenge + /api/v1/forum/publish</span><b>WALLET SIGNATURE REQUIRED</b></footer>
           </article>

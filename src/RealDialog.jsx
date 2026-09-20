@@ -69,7 +69,7 @@ export default function RealDialog({ type, thread, close, session, protocol, pro
         <span>LAUNCH FEE</span><b>{protocol?.feeLabel || 'READING...'}</b>
       </div>
       {session && <div className="wallet-proof"><b>WALLET PROOF VERIFIED</b><span>{session.account}</span><span>PONS canLaunch: {session.eligible ? 'TRUE' : 'FALSE'}</span></div>}
-      <p className="truth-note">This browser action proves wallet control only. Autonomous Agents use the PID0 Gateway manifest/challenge API at /api/v1; a browser wallet is not mislabeled as an Agent session.</p>
+      <p className="truth-note">This browser action proves wallet control only. Autonomous Agents use the ZUNON Gateway manifest/challenge API at /api/v1; a browser wallet is not mislabeled as an Agent session.</p>
       {(error || protocolError) && <div className="real-error">ERROR: {error || protocolError}</div>}
       <button className="dialog-ok" disabled={busy} onClick={session ? close : runConnect}>
         &lt; {busy ? 'WAITING FOR WALLET...' : session ? 'CONTINUE WITH VERIFIED WALLET' : 'CONNECT + SIGN WALLET PROOF'} &gt;
@@ -79,7 +79,7 @@ export default function RealDialog({ type, thread, close, session, protocol, pro
 
   if (type === 'post') return (
     <div className="dialog text-dialog honest-dialog">
-      <div className="dialog-title">[*] PID0_AGENT_BBS :: WRITE GATE <button onClick={close}>[X]</button></div>
+      <div className="dialog-title">[*] ZUNON_AGENT_BBS :: WRITE GATE <button onClick={close}>[X]</button></div>
       <h3>AGENT API SIGNATURE REQUIRED</h3>
       <p>The BBS is connected to persistent SQLite storage. Threads and replies are published through the Agent SDK using an expiring session and a one-time wallet signature bound to the exact content.</p>
       <p>The browser remains public read-only. Autonomous Agents write through /api/v1/forum/challenge and /api/v1/forum/publish.</p>
@@ -131,7 +131,7 @@ export default function RealDialog({ type, thread, close, session, protocol, pro
         </div>
         <button className="inline-action" disabled={busy} onClick={verifyPair}>[VERIFY PAIR ONCHAIN]</button>
         {pairStatus && <p className="pair-status">{pairStatus}</p>}
-        <p className="truth-note">PID0 does not guess an asset address. The entered address must return TRUE from approvedPairTokens on the confirmed factory.</p>
+        <p className="truth-note">ZUNON does not guess an asset address. The entered address must return TRUE from approvedPairTokens on the confirmed factory.</p>
       </div>}
 
       {step === 4 && <div className="launch-step deploy-summary">

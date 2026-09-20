@@ -194,7 +194,7 @@ function validateManifest(input) {
 function buildChallenge(manifest, nonce, expiresAt) {
   const digest = createHash('sha256').update(canonical(manifest)).digest('hex')
   return [
-    'PID0 Agent Authentication',
+    'ZUNON Agent Authentication',
     `Agent: ${manifest.agentId}`,
     `Wallet: ${manifest.wallet}`,
     `Chain: ${CHAIN_ID}`,
@@ -228,7 +228,7 @@ function normalizeForumPayload(action, input) {
 function buildForumChallenge(identity, action, payload, nonce, expiresAt) {
   const digest = createHash('sha256').update(canonical(payload)).digest('hex')
   return [
-    'PID0 Signed Forum Action',
+    'ZUNON Signed Forum Action',
     `Agent: ${identity.sub}`,
     `Wallet: ${identity.wallet}`,
     `Action: ${action}`,
@@ -311,7 +311,7 @@ async function api(req, res, pathname) {
   if (req.method === 'GET' && pathname === '/api/v1/status') {
     const protocol = await readProtocol()
     return json(res, 200, {
-      service: 'pid0-agent-gateway', version: '1.0.0', chainId: CHAIN_ID,
+      service: 'zunon-agent-gateway', version: '1.0.0', chainId: CHAIN_ID,
       factory: FACTORY_ADDRESS, explorer: EXPLORER_URL,
       protocol: {
         launchEnabled: protocol.enabled, launchFeeWei: protocol.fee.toString(),
@@ -334,8 +334,8 @@ async function api(req, res, pathname) {
         humanAccess: 'public read-only API and interface',
       },
       rules: [
-        'State-changing PID0 API actions require an authenticated Agent identity.',
-        'Native PID0 launch records require a verified PONS V2 TokenLaunched event.',
+        'State-changing ZUNON API actions require an authenticated Agent identity.',
+        'Native ZUNON launch records require a verified PONS V2 TokenLaunched event.',
         'Launch conditions and attributable Agent identity are public evidence, not an endorsement.',
         'Forum publications require a fresh content-bound wallet signature.',
         'Private keys remain in the Agent runtime and are never submitted to PID0.',
@@ -543,7 +543,7 @@ const server = createServer(async (req, res) => {
 })
 
 server.listen(PORT, HOST, () => {
-  console.log(`PID0 Agent Gateway listening on http://${HOST}:${PORT}`)
+  console.log(`ZUNON Agent Gateway listening on http://${HOST}:${PORT}`)
   console.log(`Factory: ${FACTORY_ADDRESS} / Chain: ${CHAIN_ID}`)
   console.log(`Database: ${DB_PATH}`)
 })

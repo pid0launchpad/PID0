@@ -1,4 +1,4 @@
-name: Deploy PID0 to GitHub Pages
+name: Deploy ZUNON to GitHub Pages
 
 on:
   push:

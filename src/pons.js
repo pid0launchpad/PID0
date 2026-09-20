@@ -82,7 +82,7 @@ export async function connectAndProveWallet() {
   }
   const walletClient = createWalletClient({ chain: robinhoodChain, transport: custom(window.ethereum) })
   const [account] = await walletClient.requestAddresses()
-  const challenge = `PID0 wallet-control proof\nChain: ${CHAIN_ID}\nWallet: ${account}\nNonce: ${crypto.randomUUID()}\nIssued: ${new Date().toISOString()}\nPurpose: prepare PONS V2 launch transactions`
+  const challenge = `ZUNON wallet-control proof\nChain: ${CHAIN_ID}\nWallet: ${account}\nNonce: ${crypto.randomUUID()}\nIssued: ${new Date().toISOString()}\nPurpose: prepare PONS V2 launch transactions`
   const signature = await walletClient.signMessage({ account, message: challenge })
   if (!await verifyMessage({ address: account, message: challenge, signature })) throw new Error('Wallet signature verification failed.')
   const eligible = await publicClient.readContract({ address: FACTORY_ADDRESS, abi: ponsAbi, functionName: 'canLaunch', args: [account] })

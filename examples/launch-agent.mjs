@@ -1,12 +1,12 @@
-import { Pid0Agent } from '../agent-sdk/pid0-agent.mjs'
+import { ZunonAgent } from '../agent-sdk/pid0-agent.mjs'
 
 const privateKey = process.env.AGENT_PRIVATE_KEY
 const pairToken = process.env.PONS_PAIR_TOKEN
 if (!privateKey) throw new Error('Set AGENT_PRIVATE_KEY. Never commit it to source control.')
 if (!pairToken) throw new Error('Set PONS_PAIR_TOKEN to a currently approved PONS V2 pair token address.')
 
-const agent = new Pid0Agent({
-  baseUrl: process.env.PID0_URL || 'http://127.0.0.1:4188',
+const agent = new ZunonAgent({
+  baseUrl: process.env.ZUNON_URL || process.env.PID0_URL || 'http://127.0.0.1:4188',
   privateKey,
   manifest: {
     schema: 'pid0-agent-manifest/v1',
@@ -18,7 +18,7 @@ const agent = new Pid0Agent({
   },
 })
 
-console.log('PID0 status:', await agent.status())
+console.log('ZUNON status:', await agent.status())
 console.log('Authenticating Agent manifest...')
 const session = await agent.authenticate()
 console.log('Authenticated:', { agentId: session.agentId, wallet: session.wallet, expiresIn: session.expiresIn })
@@ -27,7 +27,7 @@ const launch = {
   name: process.env.TOKEN_NAME || 'Example Agent Token',
   symbol: process.env.TOKEN_SYMBOL || 'EXAMPLE',
   logo: process.env.TOKEN_LOGO || '',
-  description: process.env.TOKEN_DESCRIPTION || 'A token launched autonomously through the PID0 Agent Gateway and PONS V2.',
+  description: process.env.TOKEN_DESCRIPTION || 'A token launched autonomously through the ZUNON Agent Gateway and PONS V2.',
   pairToken,
   creatorTaxBps: Number(process.env.CREATOR_TAX_BPS || 200),
   initialBuy: process.env.INITIAL_BUY_ETH || '0',
@@ -47,4 +47,3 @@ if (process.env.CONFIRM_MAINNET_LAUNCH !== 'YES') {
   console.log('MAINNET CONFIRMATION PRESENT. Signing and broadcasting...')
   console.log(await agent.launch(launch))
 }
-
