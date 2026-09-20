@@ -1,0 +1,79 @@
+/* ZUNON black phosphor system theme */
+:root{background:#000;color:#52ff79}
+html,body,#root,.terminal-os,.machine{background:#000;color:#52ff79}
+.terminal-os{--phosphor:#39ff68;--phosphor-soft:#8cff9f;--phosphor-dim:#168b37;--warning:#ffff55}
+.app-title{background:#000;color:var(--phosphor);border-color:var(--phosphor);box-shadow:none}
+.app-title>span:first-child{background-color:#000;filter:none}
+.app-title>span:not(:first-child){background:#000;color:var(--phosphor)}
+.menu-bar,.location{background:#000;color:var(--phosphor);border-color:var(--phosphor)}
+.menu-bar button,.menu-bar a,.menu-bar .wallet-nav{color:var(--phosphor);border-color:var(--phosphor-dim)}
+.menu-bar button:hover,.menu-bar button.on,.menu-bar a:hover,.menu-bar .wallet-nav.linked{background:var(--phosphor);color:#000}
+.location span{color:var(--warning)}
+.workspace,.triple-workspace,.main-panes,.info-row,.lower,.forum-section,.bbs-layout{background:var(--phosphor);border-color:var(--phosphor)}
+.frame,.directories,.inspect-pane,.project-pane,.lower .frame,.info-row .frame,.forum-frame,
+.thread-list,.thread-reader,.live-forum-frame,.bbs-detailed .thread-reader,.bbs-detailed .thread-list{background:#000;color:var(--phosphor);border-color:var(--phosphor)}
+.frame:before,.lower .frame:before,.info-row .frame:before,.forum-frame:before{border-color:var(--phosphor)}
+.frame-title,.lower .frame-title,.info-row .frame-title,.forum-frame .frame-title{color:var(--phosphor)}
+.frame-title>span,.frame-title>b,.lower .frame-title>span,.lower .frame-title>b,
+.info-row .frame-title>span,.info-row .frame-title>b,.forum-frame .frame-title>span,.forum-frame .frame-title>b{background:#000;color:var(--phosphor)}
+.table-head,.verified-table-head,.bbs-head,.live-bbs-head,.thread-list .bbs-head,.forum-frame .bbs-head,.bbs-list-foot{background:var(--phosphor);color:#000}
+.agent-list button,.verified-agent-list>button,.forum-pane>button,.thread-list>button,
+.live-forum-frame .thread-list>button,.forum-frame>button{background:#000;color:var(--phosphor);border-color:var(--phosphor-dim)}
+.agent-list button:hover,.agent-list button.selected,.verified-agent-list>button:hover,
+.verified-agent-list>button.selected,.forum-pane>button:hover,.forum-pane>button.selected,
+.thread-list>button:hover,.thread-list>button.selected,.live-forum-frame .thread-list>button:hover,
+.live-forum-frame .thread-list>button.selected,.forum-frame>button:hover,.forum-frame>button.selected{background:var(--phosphor);color:#000}
+.market-controls,.market-summary,.project-title,.project-section,.project-proof,.route-line,
+.zunon-lead,.zunon-summary,.zunon-token-card,.zunon-token-card-head,.zunon-token-ca,
+.live-protocol-grid,.chain-readout,.access-box,.info-intro,.info-actions,.info-chapter,.rule-end,
+.bbs-nodebar,.bbs-channelbar,.reader-scroll>header,.agent-record,.attachment,.reply-title,
+.bbs-reply,.forum-status,.thread-reader>header,.thread-reader>footer{background:#000;border-color:var(--phosphor);color:var(--phosphor)}
+.market-controls>span,.market-summary span,.market-summary span b,.project-title p,.project-section dt,
+.project-section dd,.project-proof,.route-line,.zunon-summary span,.zunon-lead,.zunon-token-ca span,
+.zunon-token-ca strong,.zunon-token-card p,.live-protocol-grid span,.live-protocol-grid b,
+.chain-readout span,.chain-readout b,.truth-note,.wallet-proof,.tx-success,.bbs-nodebar,
+.bbs-channelbar>span,.bbs-channelbar button,.reader-scroll,.reader-scroll>header,.agent-record span,
+.agent-record b,.message-proof,.message-body p,.bbs-reply header,.bbs-reply p,.empty-bbs,.empty-reader,
+.forum-status,.thread-by{color:var(--phosphor)}
+.signal,.pair-status{color:var(--phosphor)}
+.project-pane .signal,.project-action,.verified-action,.pane-foot,.info-actions button,
+.attachment button,.bbs-detailed .thread-reader>footer button,.thread-reader>footer button{background:var(--phosphor);color:#000}
+.verified-agent-list>button.official-token-row,.verified-agent-list>button.official-token-row.selected,
+.verified-agent-list>button.official-token-row:hover{background:#000;color:var(--phosphor);border-color:var(--warning)}
+.verified-agent-list>button.official-token-row:hover{box-shadow:inset 0 0 0 1px var(--phosphor)}
+.verified-agent-list>button.official-token-row span{color:var(--phosphor)}
+.verified-mark{background:var(--phosphor);color:#000}
+.verified-inspect .official-zunon-logo,.zunon-profile .token-glyph{background-color:#000;border-color:var(--phosphor);filter:none}
+.official-x-link{background:#000;border-color:var(--phosphor)}
+.official-x-link:hover,.official-x-link:focus-visible{background:var(--phosphor)}
+.bbs-channelbar{background:#000}
+.bbs-channelbar button.on,.bbs-channelbar button:hover{background:var(--phosphor);color:#000}
+.reader-scroll{scrollbar-color:var(--phosphor) #000}
+.reader-scroll::-webkit-scrollbar-track,.info-scroll::-webkit-scrollbar-track,.zunon-scroll::-webkit-scrollbar-track{background:#000;border-color:var(--phosphor)}
+.reader-scroll::-webkit-scrollbar-thumb,.info-scroll::-webkit-scrollbar-thumb,.zunon-scroll::-webkit-scrollbar-thumb{background:var(--phosphor);border-color:#000}
+.prompt,.output-line,.statusline{background:#000;color:var(--phosphor);border-color:var(--phosphor)}
+.prompt input{color:var(--phosphor)}
+.fkeys{background:#000;color:var(--phosphor);border-top:1px solid var(--phosphor)}
+.fkeys button{background:#000;color:var(--phosphor);border-right:1px solid var(--phosphor)}
+.fkeys button:hover{background:var(--phosphor);color:#000}
+.fkeys i{background:var(--phosphor);color:#000}
+.dialog{background:#000;color:var(--phosphor);border-color:var(--phosphor);box-shadow:10px 10px 0 rgba(0,255,72,.18)}
+.dialog:before{border-color:var(--phosphor)}
+.dialog-title{background:#000;color:var(--phosphor);border-bottom:1px solid var(--phosphor)}
+.dialog-title button,.dialog-ok,.dialog-actions button,.summary button,.inline-action,.broadcast,
+.compose-tabs button,.compose-actions button{background:#000;color:var(--phosphor);border-color:var(--phosphor);box-shadow:none}
+.dialog-title button:hover,.dialog-ok:hover,.dialog-actions button:hover,.summary button:hover,
+.inline-action:hover,.broadcast:hover,.compose-tabs button.on,.compose-actions button:last-child{background:var(--phosphor);color:#000}
+.dos-form input,.dos-form textarea,.dos-form select,.policy-grid input,.policy-grid select,
+.compose-fields input,.compose-fields select,.compose-message textarea{background:#000;color:var(--phosphor);border-color:var(--phosphor)}
+.text-dialog h3,.real-connect h3,.honest-dialog h3,.launch-step h3,.wizard-path b.on,
+.handshake b,.compose-target span,.compose-fields label,.compose-message{color:var(--phosphor)}
+.crt-glass{background:repeating-linear-gradient(0deg,rgba(0,0,0,.2) 0,rgba(0,0,0,.2) 1px,transparent 1px,transparent 3px);box-shadow:inset 0 0 150px #000}
+
+/* Keep structural bars black; phosphor fill is reserved for interaction states. */
+.terminal-os .app-title,.terminal-os .menu-bar,.terminal-os .statusline{background:#000;color:var(--phosphor);border-color:var(--phosphor)}
+.terminal-os .table-head,.terminal-os .verified-table-head,.terminal-os .bbs-head,
+.terminal-os .live-bbs-head,.terminal-os .thread-list .bbs-head,.terminal-os .forum-frame .bbs-head,
+.terminal-os .bbs-list-foot{background:#000;color:var(--phosphor);border-top:1px solid var(--phosphor);border-bottom:1px solid var(--phosphor)}
+.terminal-os .fkeys button{background:#000;color:var(--phosphor);border-color:var(--phosphor)}
+.terminal-os .fkeys i{background:var(--phosphor);color:#000}
