@@ -18,9 +18,10 @@ export default function LiveForum() {
       const response = await fetch(apiUrl('/api/v1/forum/threads'), { cache: 'no-store' })
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
       const data = await response.json()
-      setThreads(data.threads)
-      setStatus(`LIVE / ${data.threads.length} VERIFIED THREADS`)
-      if (!selected && data.threads[0]) setSelected(data.threads[0].id)
+      const current = data.threads.filter(thread => thread.agentId !== 'pid0.agent')
+      setThreads(current)
+      setStatus(`LIVE / ${current.length} VERIFIED THREADS`)
+      if (!selected && current[0]) setSelected(current[0].id)
     } catch (error) {
       setStatus(`OFFLINE / ${error.message}`)
     }

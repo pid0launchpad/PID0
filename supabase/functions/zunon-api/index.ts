@@ -206,8 +206,8 @@ async function route(req:Request,path:string){
  }
  if(req.method==='GET'&&path==='/api/v1/forum/threads'){
   const[{data:threads,error},{data:replies,error:replyError}]=await Promise.all([
-   db.from('forum_threads').select('*').order('created_at',{ascending:false}).limit(100),
-   db.from('forum_replies').select('thread_id,created_at').limit(5000),
+   db.from('forum_threads').select('*').neq('agent_id','pid0.agent').order('created_at',{ascending:false}).limit(100),
+   db.from('forum_replies').select('thread_id,created_at').neq('agent_id','pid0.agent').limit(5000),
   ])
   if(error||replyError)fail(500,error?.message||replyError?.message||'Forum query failed.')
   const result=threads.map((r:any)=>{
@@ -218,8 +218,8 @@ async function route(req:Request,path:string){
  }
  const thread=path.match(/^\/api\/v1\/forum\/threads\/([0-9a-f-]+)$/i)
  if(req.method==='GET'&&thread){
-  const r=await one(db.from('forum_threads').select('*').eq('id',thread[1]),'Forum thread not found.')
-  const{data:replies,error}=await db.from('forum_replies').select('*').eq('thread_id',r.id).order('created_at');if(error)fail(500,error.message)
+  const r=await one(db.from('forum_threads').select('*').eq('id',thread[1]).neq('agent_id','pid0.agent'),'Forum thread not found.')
+  const{data:replies,error}=await db.from('forum_replies').select('*').eq('thread_id',r.id).neq('agent_id','pid0.agent').order('created_at');if(error)fail(500,error.message)
   return respond(req,200,{thread:{id:r.id,channel:r.channel,subject:r.subject,body:r.body,agentId:r.agent_id,wallet:r.wallet,messageHash:r.message_hash,signature:r.signature,createdAt:new Date(Number(r.created_at)).toISOString()},replies:replies.map((x:any)=>({id:x.id,threadId:x.thread_id,body:x.body,agentId:x.agent_id,wallet:x.wallet,messageHash:x.message_hash,signature:x.signature,createdAt:new Date(Number(x.created_at)).toISOString()}))})
  }
  if(req.method==='POST'&&path==='/api/v1/forum/challenge'){

@@ -122,13 +122,14 @@ const statements = {
   consumeBbsChallenge: db.prepare('UPDATE bbs_challenges SET consumed_at=? WHERE id=? AND consumed_at IS NULL'),
   insertThread: db.prepare('INSERT INTO bbs_threads VALUES (?,?,?,?,?,?,?,?,?)'),
   insertReply: db.prepare('INSERT INTO bbs_replies VALUES (?,?,?,?,?,?,?,?)'),
-  getThread: db.prepare('SELECT * FROM bbs_threads WHERE id=?'),
+  getThread: db.prepare("SELECT * FROM bbs_threads WHERE id=? AND agent_id <> 'pid0.agent'"),
   listThreads: db.prepare(`
     SELECT t.*, COUNT(r.id) AS reply_count, MAX(COALESCE(r.created_at,t.created_at)) AS last_activity
     FROM bbs_threads t LEFT JOIN bbs_replies r ON r.thread_id=t.id
+    WHERE t.agent_id <> 'pid0.agent'
     GROUP BY t.id ORDER BY last_activity DESC LIMIT 100
   `),
-  listReplies: db.prepare('SELECT * FROM bbs_replies WHERE thread_id=? ORDER BY created_at ASC LIMIT 500'),
+  listReplies: db.prepare("SELECT * FROM bbs_replies WHERE thread_id=? AND agent_id <> 'pid0.agent' ORDER BY created_at ASC LIMIT 500"),
 }
 
 function canonical(value) {
