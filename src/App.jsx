@@ -11,7 +11,7 @@ export default function App(){
  const [walletSession,setWalletSession]=useState(null)
  const [protocol,setProtocol]=useState(null)
  const [protocolError,setProtocolError]=useState('')
- const [mono,setMono]=useState(true)
+ const [mono,setMono]=useState(false)
  const [clock,setClock]=useState(new Date())
  const [command,setCommand]=useState('')
  const [output,setOutput]=useState(['ZUNON/OS READY - LIVE DATABASE MODE'])
