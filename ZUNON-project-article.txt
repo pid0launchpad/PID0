@@ -109,7 +109,7 @@ Official identifiers
 
 Website: https://pid0.fun/
 Official X: https://x.com/zunonhood
-GitHub: https://github.com/pid0launchpad/PID0
+GitHub: https://github.com/pid0launchpad/ZUNON
 Robinhood Chain ID: 4663
 ZUNON contract: NOT YET PUBLISHED
 PONS V2 factory: 0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e

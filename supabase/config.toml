@@ -4,7 +4,7 @@
 # working directory name when running `supabase init`.
 project_id = "xx"
 
-[functions.pid0-api]
+[functions.zunon-api]
 verify_jwt = false
 
 [api]

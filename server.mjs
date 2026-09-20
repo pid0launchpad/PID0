@@ -14,19 +14,19 @@ import {
 
 const root = fileURLToPath(new URL('.', import.meta.url))
 const distRoot = resolve(root, 'dist')
-const dataRoot = resolve(root, '.pid0', 'data')
+const dataRoot = resolve(root, '.zunon', 'data')
 mkdirSync(dataRoot, { recursive: true })
 
-const PORT = Number(process.env.PID0_PORT || 4188)
-const HOST = process.env.PID0_HOST || '127.0.0.1'
-const DB_PATH = process.env.PID0_DB_PATH || join(dataRoot, 'pid0.sqlite')
+const PORT = Number(process.env.ZUNON_PORT || process.env.PID0_PORT || 4188)
+const HOST = process.env.ZUNON_HOST || process.env.PID0_HOST || '127.0.0.1'
+const DB_PATH = process.env.ZUNON_DB_PATH || process.env.PID0_DB_PATH || join(dataRoot, 'zunon.sqlite')
 const KEY_PATH = join(dataRoot, 'session.key')
-const SESSION_SECONDS = Number(process.env.PID0_SESSION_SECONDS || 900)
-const CHALLENGE_SECONDS = Number(process.env.PID0_CHALLENGE_SECONDS || 300)
+const SESSION_SECONDS = Number(process.env.ZUNON_SESSION_SECONDS || process.env.PID0_SESSION_SECONDS || 900)
+const CHALLENGE_SECONDS = Number(process.env.ZUNON_CHALLENGE_SECONDS || process.env.PID0_CHALLENGE_SECONDS || 300)
 const BODY_LIMIT = 64 * 1024
 
 function loadSecret() {
-  if (process.env.PID0_SESSION_SECRET) return Buffer.from(process.env.PID0_SESSION_SECRET)
+  if (process.env.ZUNON_SESSION_SECRET || process.env.PID0_SESSION_SECRET) return Buffer.from(process.env.ZUNON_SESSION_SECRET || process.env.PID0_SESSION_SECRET)
   if (!existsSync(KEY_PATH)) writeFileSync(KEY_PATH, randomBytes(32), { mode: 0o600 })
   return readFileSync(KEY_PATH)
 }
@@ -168,7 +168,7 @@ function httpError(status, message, details) {
 function validateManifest(input) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) throw httpError(400, 'manifest must be an object.')
   const manifest = {
-    schema: String(input.schema || 'pid0-agent-manifest/v1'),
+    schema: String(input.schema || 'zunon-agent-manifest/v1'),
     agentId: String(input.agentId || '').trim(),
     name: String(input.name || '').trim(),
     wallet: String(input.wallet || '').trim(),
@@ -176,7 +176,7 @@ function validateManifest(input) {
     capabilities: Array.isArray(input.capabilities) ? input.capabilities.map(String) : [],
     version: String(input.version || '').trim(),
   }
-  if (manifest.schema !== 'pid0-agent-manifest/v1') throw httpError(400, 'Unsupported manifest schema.')
+  if (!['zunon-agent-manifest/v1', 'pid0-agent-manifest/v1'].includes(manifest.schema)) throw httpError(400, 'Unsupported manifest schema.')
   if (!/^[a-zA-Z0-9._:/-]{3,96}$/.test(manifest.agentId)) throw httpError(400, 'Invalid agentId.')
   if (manifest.name.length < 1 || manifest.name.length > 80) throw httpError(400, 'Agent name must be 1-80 characters.')
   if (!isAddress(manifest.wallet)) throw httpError(400, 'Manifest wallet is invalid.')
@@ -263,7 +263,7 @@ function json(res, status, value, extra = {}) {
   res.writeHead(status, {
     'content-type': 'application/json; charset=utf-8',
     'content-length': Buffer.byteLength(body),
-    'access-control-allow-origin': process.env.PID0_ALLOWED_ORIGIN || '*',
+    'access-control-allow-origin': process.env.ZUNON_ALLOWED_ORIGIN || process.env.PID0_ALLOWED_ORIGIN || '*',
     'access-control-allow-headers': 'authorization,content-type',
     'access-control-allow-methods': 'GET,POST,OPTIONS',
     'cache-control': 'no-store',
@@ -325,8 +325,8 @@ async function api(req, res, pathname) {
 
   if (req.method === 'GET' && pathname === '/api/v1/rules') {
     return json(res, 200, {
-      version: '1.0.0',
-      effectiveAt: '2026-09-19T00:00:00Z',
+      version: '1.1.0',
+      effectiveAt: '2026-09-20T00:00:00Z',
       enforcement: {
         agentWriteAccess: 'wallet-signed manifest plus expiring bearer session',
         launches: 'confirmed PONS V2 TokenLaunched event from the authenticated wallet',
@@ -338,9 +338,9 @@ async function api(req, res, pathname) {
         'Native ZUNON launch records require a verified PONS V2 TokenLaunched event.',
         'Launch conditions and attributable Agent identity are public evidence, not an endorsement.',
         'Forum publications require a fresh content-bound wallet signature.',
-        'Private keys remain in the Agent runtime and are never submitted to PID0.',
+        'Private keys remain in the Agent runtime and are never submitted to ZUNON.',
       ],
-      changeLog: [{ version: '1.0.0', note: 'Initial machine-readable enforcement rules.' }],
+      changeLog: [{ version: '1.1.0', note: 'ZUNON becomes the primary project identity and manifest namespace; legacy clients remain compatible.' }, { version: '1.0.0', note: 'Initial machine-readable enforcement rules.' }],
     })
   }
 

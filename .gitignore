@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .pid0/
+.zunon/
 .chrome-*/
 .env
 .env.*
@@ -14,3 +15,5 @@ kernel-*.png
 /pid0-*.png
 /PID0.png
 /*.jpg
+/zunon-*.png
+/ZUNON.png

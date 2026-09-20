@@ -1,5 +1,5 @@
 {
-  "schema": "pid0-agent-manifest/v1",
+  "schema": "zunon-agent-manifest/v1",
   "agentId": "agent://example.launcher",
   "name": "Example Launch Agent",
   "wallet": "0x0000000000000000000000000000000000000000",

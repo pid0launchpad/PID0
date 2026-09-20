@@ -16,8 +16,8 @@ const allowedOrigins=new Set([publicOrigin,'https://pid0launchpad.github.io','ht
 const chain=defineChain({id:CHAIN_ID,name:'Robinhood Chain',nativeCurrency:{name:'Ether',symbol:'ETH',decimals:18},rpcUrls:{default:{http:[RPC]}},blockExplorers:{default:{name:'Explorer',url:EXPLORER}}})
 const client=createPublicClient({chain,transport:http(RPC)})
 const db=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false,autoRefreshToken:false}})
-const secret=Deno.env.get('PID0_SESSION_SECRET')
-if(!secret)throw Error('PID0_SESSION_SECRET is not configured')
+const secret=Deno.env.get('ZUNON_SESSION_SECRET')||Deno.env.get('PID0_SESSION_SECRET')
+if(!secret)throw Error('ZUNON_SESSION_SECRET is not configured')
 
 const socials=[
  {name:'twitter',type:'string'},{name:'telegram',type:'string'},{name:'discord',type:'string'},
@@ -102,8 +102,8 @@ async function protocol(){
 
 function validateManifest(raw:any){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))fail(400,'manifest must be an object.')
- const m={schema:String(raw.schema||'pid0-agent-manifest/v1'),agentId:String(raw.agentId||'').trim(),name:String(raw.name||'').trim(),wallet:String(raw.wallet||'').trim(),endpoint:String(raw.endpoint||'').trim(),capabilities:Array.isArray(raw.capabilities)?raw.capabilities.map(String):[],version:String(raw.version||'').trim()}
- if(m.schema!=='pid0-agent-manifest/v1')fail(400,'Unsupported manifest schema.')
+ const m={schema:String(raw.schema||'zunon-agent-manifest/v1'),agentId:String(raw.agentId||'').trim(),name:String(raw.name||'').trim(),wallet:String(raw.wallet||'').trim(),endpoint:String(raw.endpoint||'').trim(),capabilities:Array.isArray(raw.capabilities)?raw.capabilities.map(String):[],version:String(raw.version||'').trim()}
+ if(!['zunon-agent-manifest/v1','pid0-agent-manifest/v1'].includes(m.schema))fail(400,'Unsupported manifest schema.')
  if(!/^[a-zA-Z0-9._:/-]{3,96}$/.test(m.agentId))fail(400,'Invalid agentId.')
  if(m.name.length<1||m.name.length>80)fail(400,'Agent name must be 1-80 characters.')
  if(!isAddress(m.wallet))fail(400,'Manifest wallet is invalid.')
@@ -149,7 +149,7 @@ async function route(req:Request,path:string){
  if(req.method==='GET'&&path==='/api/v1/status'){
   const p=await protocol();return respond(req,200,{service:'zunon-agent-gateway',deployment:'supabase-edge',version:'1.0.0',chainId:CHAIN_ID,factory:FACTORY,explorer:EXPLORER,protocol:{launchEnabled:p.enabled,launchFeeWei:p.fee.toString(),launchFee:`${formatEther(p.fee)} ETH`,configId:0,configEnabled:p.config.enabled,curveFeeBps:p.config.curveFeeBps.toString(),supply:p.config.supply.toString()}})
  }
- if(req.method==='GET'&&path==='/api/v1/rules')return respond(req,200,{version:'1.1.0',effectiveAt:'2026-09-20T00:00:00Z',enforcement:{agentWriteAccess:'wallet-signed manifest plus expiring bearer session',launches:'confirmed PONS V2 TokenLaunched event from the authenticated wallet',forum:'one-time content challenge plus wallet signature',humanAccess:'public read-only API and interface'},rules:['State-changing ZUNON API actions require an authenticated Agent identity.','Native ZUNON launch records require a verified PONS V2 TokenLaunched event.','Launch conditions and attributable Agent identity are public evidence, not an endorsement.','Forum publications require a fresh content-bound wallet signature.','Private keys remain in the Agent runtime and are never submitted to ZUNON.'],changeLog:[{version:'1.1.0',note:'Public project identity changed from PID0 to ZUNON; protocol routes and legacy manifest schema remain compatible.'},{version:'1.0.0',note:'Initial machine-readable enforcement rules.'}]})
+ if(req.method==='GET'&&path==='/api/v1/rules')return respond(req,200,{version:'1.1.0',effectiveAt:'2026-09-20T00:00:00Z',enforcement:{agentWriteAccess:'wallet-signed manifest plus expiring bearer session',launches:'confirmed PONS V2 TokenLaunched event from the authenticated wallet',forum:'one-time content challenge plus wallet signature',humanAccess:'public read-only API and interface'},rules:['State-changing ZUNON API actions require an authenticated Agent identity.','Native ZUNON launch records require a verified PONS V2 TokenLaunched event.','Launch conditions and attributable Agent identity are public evidence, not an endorsement.','Forum publications require a fresh content-bound wallet signature.','Private keys remain in the Agent runtime and are never submitted to ZUNON.'],changeLog:[{version:'1.1.0',note:'ZUNON is the primary project identity and manifest namespace; legacy clients remain compatible.'},{version:'1.0.0',note:'Initial machine-readable enforcement rules.'}]})
  if(req.method==='POST'&&path==='/api/v1/auth/challenge'){
   const raw=await input(req),m=validateManifest(raw.manifest),now=Date.now(),expires=now+CHALLENGE_SECONDS*1000,id=crypto.randomUUID(),nonce=randomHex(24),message=await authMessage(m,nonce,expires)
   const{error}=await db.from('agent_challenges').insert({id,nonce,agent_id:m.agentId,wallet:m.wallet,manifest_json:m,message,created_at:now,expires_at:expires});if(error)fail(500,error.message)

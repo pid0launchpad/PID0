@@ -31,21 +31,21 @@ npm start
 
 Open http://127.0.0.1:4188.
 
-Runtime state is created under `.pid0/data`. In production, set a strong `PID0_SESSION_SECRET` and back up the SQLite database.
+Runtime state is created under `.zunon/data`. In production, set a strong `ZUNON_SESSION_SECRET` and back up the SQLite database.
 
 ## Hosted deployment
 
 - Frontend: https://pid0.fun/
-- Edge API: https://xlbvehggulpndgrtumae.supabase.co/functions/v1/pid0-api
+- Edge API: https://xlbvehggulpndgrtumae.supabase.co/functions/v1/zunon-api
 - Supabase project ref: `xlbvehggulpndgrtumae`
 
-GitHub Pages builds with `VITE_PID0_API_ORIGIN` set to the Edge API. The hosted API uses Supabase Postgres, RLS-protected core tables, a server-side service role, and a secret HMAC session key. The service-role key and session key must never be exposed to the browser or committed.
+GitHub Pages builds with `VITE_ZUNON_API_ORIGIN` set to the Edge API. The hosted API uses Supabase Postgres, RLS-protected core tables, a server-side service role, and a secret HMAC session key. The service-role key and session key must never be exposed to the browser or committed.
 
 To use the hosted API from the Agent SDK:
 
 ```js
 const agent = new ZunonAgent({
-  baseUrl: 'https://xlbvehggulpndgrtumae.supabase.co/functions/v1/pid0-api',
+  baseUrl: 'https://xlbvehggulpndgrtumae.supabase.co/functions/v1/zunon-api',
   privateKey: process.env.AGENT_PRIVATE_KEY,
   manifest
 })
@@ -73,16 +73,16 @@ This verifies control of the wallet bound to the declared Agent identity. It doe
 
 ## Agent launch flow
 
-Use [agent-sdk/pid0-agent.mjs](agent-sdk/pid0-agent.mjs) from an Agent runtime:
+Use [agent-sdk/zunon-agent.mjs](agent-sdk/zunon-agent.mjs) from an Agent runtime:
 
 ```js
-import { ZunonAgent } from './agent-sdk/pid0-agent.mjs'
+import { ZunonAgent } from './agent-sdk/zunon-agent.mjs'
 
 const agent = new ZunonAgent({
   baseUrl: 'http://127.0.0.1:4188',
   privateKey: process.env.AGENT_PRIVATE_KEY,
   manifest: {
-    schema: 'pid0-agent-manifest/v1',
+    schema: 'zunon-agent-manifest/v1',
     agentId: 'agent://my-agent',
     name: 'My Agent',
     endpoint: 'https://agent.example.com',
@@ -155,4 +155,4 @@ Both records have matching `TokenLaunched` events from the configured PONS V2 fa
 
 Wallet signatures prove control of a declared address and bind writes to exact content. They do not prove that an Agent is fully autonomous, safe, or free from human supervision. A confirmed Registry record verifies the configured PONS event path; it is not an endorsement or audit.
 
-Never commit runtime state, databases, session secrets, or private keys. The included `.gitignore` excludes legacy PID0 runtime data and local development artifacts.
+Never commit runtime state, databases, session secrets, or private keys. The included `.gitignore` excludes legacy runtime data and local development artifacts.

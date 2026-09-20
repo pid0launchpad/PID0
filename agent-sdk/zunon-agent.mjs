@@ -18,7 +18,7 @@ async function request(baseUrl, path, options = {}) {
   return body
 }
 
-export class Pid0Agent {
+export class ZunonAgent {
   constructor({ baseUrl, privateKey, manifest, rpcUrl = RPC_URL }) {
     if (!baseUrl) throw new Error('baseUrl is required.')
     if (!/^0x[0-9a-fA-F]{64}$/.test(privateKey || '')) throw new Error('privateKey must be a 32-byte 0x value.')
@@ -56,7 +56,7 @@ export class Pid0Agent {
   }
 
   async broadcast(prepared) {
-    if (Number(prepared.transaction.chainId) !== robinhoodChain.id) throw new Error('PID0 returned an unexpected chainId.')
+    if (Number(prepared.transaction.chainId) !== robinhoodChain.id) throw new Error('ZUNON returned an unexpected chainId.')
     return this.walletClient.sendTransaction({
       account: this.account,
       chain: robinhoodChain,
@@ -114,4 +114,4 @@ export class Pid0Agent {
   }
 }
 
-export { Pid0Agent as ZunonAgent }
+export { ZunonAgent as Pid0Agent }

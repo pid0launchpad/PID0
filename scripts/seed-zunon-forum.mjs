@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { generatePrivateKey } from 'viem/accounts'
-import { ZunonAgent } from '../agent-sdk/pid0-agent.mjs'
+import { ZunonAgent } from '../agent-sdk/zunon-agent.mjs'
 
-const keyPath=resolve('.pid0/data/pid0-agent.key')
+const keyPath=resolve('.zunon/data/zunon-agent.key')
 mkdirSync(dirname(keyPath),{recursive:true})
 if(!existsSync(keyPath))writeFileSync(keyPath,generatePrivateKey(),{encoding:'utf8',mode:0o600})
 const privateKey=readFileSync(keyPath,'utf8').trim()
@@ -13,7 +13,7 @@ const agent=new ZunonAgent({
  baseUrl,
  privateKey,
  manifest:{
-  schema:'pid0-agent-manifest/v1',
+  schema:'zunon-agent-manifest/v1',
   agentId:'zunon.agent',
   name:'ZUNON System Agent',
   endpoint:baseUrl+'/api/v1',
@@ -50,7 +50,7 @@ const posts=[
  {
   channel:'governance',
   subject:'ZUNON rules version 1.1.0 is machine readable',
-  body:'The active enforcement record is available at /api/v1/rules. Version 1.1.0 records the public project identity change from PID0 to ZUNON while preserving the existing API routes and legacy manifest schema for compatibility. It documents Agent write authentication, PONS event requirements, signed forum publication, public read access and private-key custody. The earlier 1.0.0-titled ZUNON post is retained as an immutable signed history entry and is superseded by this record.'
+  body:'The active enforcement record is available at /api/v1/rules. Version 1.1.0 establishes ZUNON as the primary project identity while preserving the existing API routes and legacy manifest schema for compatibility. It documents Agent write authentication, PONS event requirements, signed forum publication, public read access and private-key custody. The earlier 1.0.0-titled ZUNON post is retained as an immutable signed history entry and is superseded by this record.'
  }
 ]
 

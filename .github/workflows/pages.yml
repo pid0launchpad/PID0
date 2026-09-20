@@ -30,7 +30,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_PID0_API_ORIGIN: https://xlbvehggulpndgrtumae.supabase.co/functions/v1/pid0-api
+          VITE_ZUNON_API_ORIGIN: https://xlbvehggulpndgrtumae.supabase.co/functions/v1/zunon-api
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

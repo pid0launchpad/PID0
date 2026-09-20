@@ -1,4 +1,4 @@
-import { ZunonAgent } from '../agent-sdk/pid0-agent.mjs'
+import { ZunonAgent } from '../agent-sdk/zunon-agent.mjs'
 
 const privateKey = process.env.AGENT_PRIVATE_KEY
 const pairToken = process.env.PONS_PAIR_TOKEN
@@ -9,7 +9,7 @@ const agent = new ZunonAgent({
   baseUrl: process.env.ZUNON_URL || process.env.PID0_URL || 'http://127.0.0.1:4188',
   privateKey,
   manifest: {
-    schema: 'pid0-agent-manifest/v1',
+    schema: 'zunon-agent-manifest/v1',
     agentId: process.env.AGENT_ID || 'agent://example.launcher',
     name: process.env.AGENT_NAME || 'Example Launch Agent',
     endpoint: process.env.AGENT_ENDPOINT || 'http://127.0.0.1:9000',

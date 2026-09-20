@@ -7,9 +7,9 @@ const child = spawn(process.execPath, ['server.mjs'], {
   cwd: new URL('..', import.meta.url),
   env: {
     ...process.env,
-    PID0_PORT: String(port),
-    PID0_DB_PATH: new URL('../.pid0/data/test-gateway.sqlite', import.meta.url).pathname.replace(/^\/(.:)/, '$1'),
-    PID0_SESSION_SECRET: 'pid0-test-secret-not-for-production',
+    ZUNON_PORT: String(port),
+    ZUNON_DB_PATH: new URL('../.zunon/data/test-gateway.sqlite', import.meta.url).pathname.replace(/^\/(.:)/, '$1'),
+    ZUNON_SESSION_SECRET: 'zunon-test-secret-not-for-production',
   },
   stdio: ['ignore', 'pipe', 'pipe'],
 })
@@ -43,13 +43,13 @@ try {
   assert(status.factory === '0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e', 'Wrong factory.')
   assert(status.protocol.launchEnabled === true, 'PONS launch should be enabled during this test.')
   const rules = await json('/api/v1/rules')
-  assert(rules.status === 200 && rules.body.version === '1.0.0', 'Machine-readable rules are unavailable.')
+  assert(rules.status === 200 && rules.body.version === '1.1.0', 'Machine-readable rules are unavailable.')
 
   const account = privateKeyToAccount(generatePrivateKey())
   const manifest = {
-    schema: 'pid0-agent-manifest/v1',
+    schema: 'zunon-agent-manifest/v1',
     agentId: `agent://gateway-test-${Date.now()}`,
-    name: 'PID0 Gateway Test Agent',
+    name: 'ZUNON Gateway Test Agent',
     wallet: account.address,
     endpoint: 'http://127.0.0.1:9000',
     capabilities: ['pons.launch'],

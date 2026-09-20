@@ -10,7 +10,7 @@
     "start": "node server.mjs",
     "agent:example": "node examples/launch-agent.mjs",
     "agent:launch-two": "node scripts/dual-launch-agent.mjs",
-    "forum:seed": "node scripts/seed-pid0-forum.mjs",
+    "forum:seed": "node scripts/seed-zunon-forum.mjs",
     "test:gateway": "node tests/gateway.mjs"
   },
   "dependencies": {

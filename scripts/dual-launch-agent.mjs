@@ -1,11 +1,11 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { formatEther, parseEther } from 'viem'
-import { ZunonAgent } from '../agent-sdk/pid0-agent.mjs'
+import { ZunonAgent } from '../agent-sdk/zunon-agent.mjs'
 
-const keyPath = process.env.AGENT_KEY_FILE || '.pid0/data/dual-launch-agent.key'
-const configPath = process.env.DUAL_LAUNCH_CONFIG || '.pid0/data/dual-launches.json'
-const resultPath = process.env.DUAL_LAUNCH_RESULTS || '.pid0/data/dual-launch-results.json'
-const baseUrl = process.env.ZUNON_URL || process.env.PID0_URL || 'https://xlbvehggulpndgrtumae.supabase.co/functions/v1/pid0-api'
+const keyPath = process.env.AGENT_KEY_FILE || '.zunon/data/dual-launch-agent.key'
+const configPath = process.env.DUAL_LAUNCH_CONFIG || '.zunon/data/dual-launches.json'
+const resultPath = process.env.DUAL_LAUNCH_RESULTS || '.zunon/data/dual-launch-results.json'
+const baseUrl = process.env.ZUNON_URL || process.env.PID0_URL || 'https://xlbvehggulpndgrtumae.supabase.co/functions/v1/zunon-api'
 
 const privateKey = (await readFile(keyPath, 'utf8')).trim()
 const config = JSON.parse(await readFile(configPath, 'utf8'))
@@ -43,7 +43,7 @@ const agent = new ZunonAgent({
   baseUrl,
   privateKey,
   manifest: {
-    schema: 'pid0-agent-manifest/v1',
+    schema: 'zunon-agent-manifest/v1',
     agentId: config.agentId || 'agent://zunon.dual-launcher',
     name: config.agentName || 'ZUNON Dual Launch Agent',
     endpoint: config.endpoint || 'https://pid0.fun/agents/dual-launcher',
