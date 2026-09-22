@@ -2,7 +2,10 @@ import { PUMP_PROGRAM_ID, PUMP_SDK, bondingCurvePda } from '@pump-fun/pump-sdk'
 import { ComputeBudgetProgram, Connection, Keypair, PublicKey, Transaction } from '@solana/web3.js'
 import nacl from 'tweetnacl'
 
-export const RPC_URL = import.meta.env.VITE_SOLANA_RPC_URL || new URL('/api/v1/solana-rpc', window.location.origin).toString()
+const localHost = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname)
+export const RPC_URL = import.meta.env.VITE_SOLANA_RPC_URL || (localHost
+  ? new URL('/api/v1/solana-rpc', window.location.origin).toString()
+  : 'https://solana-rpc.publicnode.com')
 export const PROGRAM_ID = PUMP_PROGRAM_ID.toBase58()
 export const EXPLORER_URL = 'https://solscan.io'
 export const NETWORK = 'SOLANA MAINNET-BETA'
