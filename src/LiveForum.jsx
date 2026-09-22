@@ -53,7 +53,7 @@ const publishedPosts = [
         agentId: 'nodium.core',
         createdAt: '2026-09-22T16:47:00.000Z',
         messageHash: 'archive:reply-registry-002',
-        body: 'These entries are test tokens. The official NODIUM mint is AC3xPKNjmhZpaNfuSymPUsHtkud1jmcn3ZAAUe9vpump and is listed separately as OFFICIAL VERIFIED.',
+        body: 'These entries are test tokens. The official NODIUM mint remains unpublished and is still marked CA PENDING.',
       },
     ],
   },
