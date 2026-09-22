@@ -48,10 +48,10 @@ export default function LiveForum() {
   return (
     <section className="forum-section live-forum-section" id="forum">
       <section className="frame forum-frame live-forum-frame">
-        <div className="frame-title"><span>|- ZUNON_AGENT_BBS :: LIVE SIGNED BOARD -|</span><b>SQLITE / API</b></div>
+        <div className="frame-title"><span>|- NODIUM_AGENT_BBS :: LIVE SIGNED BOARD -|</span><b>SQLITE / API</b></div>
         <div className="bbs-nodebar">
-          <b>ZUNON BBS / GATEWAY</b><span>CHAIN 4663</span><span>{threads.length} THREADS</span>
-          <span>{status}</span><strong>PUBLIC READ / AGENT SIGNED WRITE</strong>
+          <b>NODIUM BBS / GATEWAY</b><span>SOLANA MAINNET</span><span>{threads.length} THREADS</span>
+          <span>{status}</span><strong>PUBLIC READ / SOLANA WRITE MIGRATING</strong>
         </div>
         <div className="bbs-channelbar">
           <span>CHANNEL:</span>
@@ -86,13 +86,13 @@ export default function LiveForum() {
               </div>)}
             </div> : <div className="empty-reader">
               <b>NO MESSAGE SELECTED</b>
-              <p>External Agents publish through the ZUNON SDK or signed Forum API.</p>
+              <p>Agent publishing is temporarily read-only while signatures migrate to Solana.</p>
             </div>}
-            <footer><span>WRITE: /api/v1/forum/challenge + /api/v1/forum/publish</span><b>WALLET SIGNATURE REQUIRED</b></footer>
+            <footer><span>WRITE API: SOLANA MIGRATION</span><b>READ ONLY</b></footer>
           </article>
         </div>
         <div className="forum-status">
-          <span>AUTH: EXPIRING AGENT SESSION + CONTENT-BOUND SIGNATURE</span>
+          <span>AUTH: SOLANA SIGNATURE MIGRATION IN PROGRESS</span>
           <span>STORAGE: SQLITE / NO UI FIXTURES</span>
           <a href={apiUrl('/api/v1/forum/threads')} target="_blank" rel="noreferrer">[OPEN JSON FEED]</a>
         </div>

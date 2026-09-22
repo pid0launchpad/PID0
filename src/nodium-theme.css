@@ -1,4 +1,4 @@
-/* ZUNON black phosphor system theme */
+/* NODIUM black phosphor system theme */
 :root{background:#000;color:#52ff79}
 html,body,#root,.terminal-os,.machine{background:#000;color:#52ff79}
 .terminal-os{--phosphor:#39ff68;--phosphor-soft:#8cff9f;--phosphor-dim:#168b37;--warning:#ffff55}
@@ -24,13 +24,13 @@ html,body,#root,.terminal-os,.machine{background:#000;color:#52ff79}
 .thread-list>button:hover,.thread-list>button.selected,.live-forum-frame .thread-list>button:hover,
 .live-forum-frame .thread-list>button.selected,.forum-frame>button:hover,.forum-frame>button.selected{background:var(--phosphor);color:#000}
 .market-controls,.market-summary,.project-title,.project-section,.project-proof,.route-line,
-.zunon-lead,.zunon-summary,.zunon-token-card,.zunon-token-card-head,.zunon-token-ca,
+.nodium-lead,.nodium-summary,.nodium-token-card,.nodium-token-card-head,.nodium-token-ca,
 .live-protocol-grid,.chain-readout,.access-box,.info-intro,.info-actions,.info-chapter,.rule-end,
 .bbs-nodebar,.bbs-channelbar,.reader-scroll>header,.agent-record,.attachment,.reply-title,
 .bbs-reply,.forum-status,.thread-reader>header,.thread-reader>footer{background:#000;border-color:var(--phosphor);color:var(--phosphor)}
 .market-controls>span,.market-summary span,.market-summary span b,.project-title p,.project-section dt,
-.project-section dd,.project-proof,.route-line,.zunon-summary span,.zunon-lead,.zunon-token-ca span,
-.zunon-token-ca strong,.zunon-token-card p,.live-protocol-grid span,.live-protocol-grid b,
+.project-section dd,.project-proof,.route-line,.nodium-summary span,.nodium-lead,.nodium-token-ca span,
+.nodium-token-ca strong,.nodium-token-card p,.live-protocol-grid span,.live-protocol-grid b,
 .chain-readout span,.chain-readout b,.truth-note,.wallet-proof,.tx-success,.bbs-nodebar,
 .bbs-channelbar>span,.bbs-channelbar button,.reader-scroll,.reader-scroll>header,.agent-record span,
 .agent-record b,.message-proof,.message-body p,.bbs-reply header,.bbs-reply p,.empty-bbs,.empty-reader,
@@ -43,14 +43,14 @@ html,body,#root,.terminal-os,.machine{background:#000;color:#52ff79}
 .verified-agent-list>button.official-token-row:hover{box-shadow:inset 0 0 0 1px var(--phosphor)}
 .verified-agent-list>button.official-token-row span{color:var(--phosphor)}
 .verified-mark{background:var(--phosphor);color:#000}
-.verified-inspect .official-zunon-logo,.zunon-profile .token-glyph{background-color:#000;border-color:var(--phosphor);filter:none}
+.verified-inspect .official-nodium-logo,.nodium-profile .token-glyph{background-color:#000;border-color:var(--phosphor);filter:none}
 .official-x-link{background:#000;border-color:var(--phosphor)}
 .official-x-link:hover,.official-x-link:focus-visible{background:var(--phosphor)}
 .bbs-channelbar{background:#000}
 .bbs-channelbar button.on,.bbs-channelbar button:hover{background:var(--phosphor);color:#000}
 .reader-scroll{scrollbar-color:var(--phosphor) #000}
-.reader-scroll::-webkit-scrollbar-track,.info-scroll::-webkit-scrollbar-track,.zunon-scroll::-webkit-scrollbar-track{background:#000;border-color:var(--phosphor)}
-.reader-scroll::-webkit-scrollbar-thumb,.info-scroll::-webkit-scrollbar-thumb,.zunon-scroll::-webkit-scrollbar-thumb{background:var(--phosphor);border-color:#000}
+.reader-scroll::-webkit-scrollbar-track,.info-scroll::-webkit-scrollbar-track,.nodium-scroll::-webkit-scrollbar-track{background:#000;border-color:var(--phosphor)}
+.reader-scroll::-webkit-scrollbar-thumb,.info-scroll::-webkit-scrollbar-thumb,.nodium-scroll::-webkit-scrollbar-thumb{background:var(--phosphor);border-color:#000}
 .prompt,.output-line,.statusline{background:#000;color:var(--phosphor);border-color:var(--phosphor)}
 .prompt input{color:var(--phosphor)}
 .fkeys{background:#000;color:var(--phosphor);border-top:1px solid var(--phosphor)}
