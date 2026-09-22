@@ -1,133 +1,87 @@
 import { useEffect, useMemo, useState } from 'react'
-import { connection, EXPLORER_URL, PROGRAM_ID } from './pumpfun'
+import { formatEther, parseAbiItem } from 'viem'
+import { publicClient } from './pons'
+import { apiUrl } from './api'
 
-const short = value => value ? `${value.slice(0, 8)}...${value.slice(-6)}` : 'N/A'
-const official = {
-  id: 'nodium', token: 'NODIUM', ticker: 'NODIUM', type: 'OFFICIAL PROJECT TOKEN',
-  status: 'CA PENDING', agent: 'NODIUM NETWORK', network: 'SOLANA MAINNET-BETA',
-  contract: '', curve: '', txHash: '', pairLabel: 'SOL',
-  description: 'The official NODIUM token mint has not been published. No address should be treated as official until it appears here.',
-  proof: 'AWAITING OFFICIAL TOKEN MINT',
-}
-
-
-const testTokens = [
-  {
-    id: 'test-1', token: 'TEST 1', ticker: 'TEST', type: 'PUMP.FUN TEST TOKEN',
-    status: 'PUMP VERIFIED', agent: 'NODIUM TEST', network: 'SOLANA MAINNET-BETA',
-    contract: 'AqXqcSX2yLNHsUEp932XZR443Uk8KJWkKYYQeNhRpump',
-    curve: '8DrLzN6U3WGLCgRWAquNsbuRaWhb8ovZhcM5eL57P2o3', txHash: '', pairLabel: 'SOL',
-    description: 'NODIUM test token. Its Token-2022 mint and Pump bonding curve have been verified on Solana.',
-    proof: 'PUMP BONDING CURVE VERIFIED',
-  },
-  {
-    id: 'test-2', token: 'TEST 2', ticker: 'TEST', type: 'PUMP.FUN TEST TOKEN',
-    status: 'PUMP VERIFIED', agent: 'NODIUM TEST', network: 'SOLANA MAINNET-BETA',
-    contract: 'F7HRNAN1KPLuYAT1Y2ChdyAsjFw3Gz7sGexhxt3Ppump',
-    curve: '2a28PSokNMjzx7rpiDbXguEerZXVzKWPuhBKyxUuPckC', txHash: '', pairLabel: 'SOL',
-    description: 'NODIUM test token. Its Token-2022 mint and Pump bonding curve have been verified on Solana.',
-    proof: 'PUMP BONDING CURVE VERIFIED',
-  },
+const FACTORY='0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e'
+const EXPLORER='https://explorer.mainnet.chain.robinhood.com'
+const ZERO_ADDRESS='0x0000000000000000000000000000000000000000'
+const transferEvent=parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 value)')
+const balanceAbi=[{type:'function',name:'balanceOf',stateMutability:'view',inputs:[{name:'account',type:'address'}],outputs:[{type:'uint256'}]}]
+const short=v=>v&&v.startsWith('0x')?v.slice(0,8)+'...'+v.slice(-6):v||'N/A'
+const fixed=[
+ {id:'zunon',token:'NODIUM',ticker:'NODIUM',type:'OFFICIAL PROJECT TOKEN',status:'CA PENDING',agent:'NODIUM NETWORK',network:'ROBINHOOD CHAIN / 4663',contract:'',curve:'',pairToken:ZERO_ADDRESS,pairLabel:'NATIVE ETH',txHash:'',launchBlock:'',liquidity:'',holders:'',description:'The official $NODIUM contract address has not been published. Wait for the real address to appear here and through the official NODIUM channel.',proof:'AWAITING OFFICIAL TOKEN CONTRACT'},
+ {id:'test02',token:'TEST 02',ticker:'TEST',type:'TEST LAUNCH TOKEN',status:'PONS CONFIRMED',agent:'NODIUM LAUNCH TEST',network:'ROBINHOOD CHAIN / 4663',contract:'0x0ab609a4c47d3006ca4f53909864c6ffb3e74e07',curve:'0x714766672e4a938363da159bebfe45e770595112',pairToken:ZERO_ADDRESS,pairLabel:'NATIVE ETH',txHash:'0xef5cdcd19a2d6a7f27f9a732b7c6b4b19a5fd5b6b8c9e254860081465cd2f1c4',launchBlock:'0x3ffe1bd',description:'TEST 02 is a PONS V2 test launch used to validate the NODIUM launch path before the official $NODIUM deployment. Its TokenLaunched event, token, curve, deployer and native-ETH pair are verified on Robinhood Chain.',proof:'PONS TOKENLAUNCHED EVENT VERIFIED'},
+ {id:'test01',token:'TEST 01',ticker:'TEST',type:'TEST LAUNCH TOKEN',status:'PONS CONFIRMED',agent:'NODIUM LAUNCH TEST',network:'ROBINHOOD CHAIN / 4663',contract:'0x1d888e2f742113408c1036579d54a11069df2134',curve:'0x30d9d2fbb6e8b31d5c19e4d23376e4d86f74bd44',pairToken:ZERO_ADDRESS,pairLabel:'NATIVE ETH',txHash:'0x90855cbe653699fdbeb1aca1f3e0293c6a5dd2f21c22c4e315b1add4ebca8ffd',launchBlock:'0x3ffde43',description:'TEST 01 is the first PONS V2 test launch for NODIUM. Its TokenLaunched event, token, curve, deployer and native-ETH pair are verified on Robinhood Chain. It remains a test token rather than the official $NODIUM token.',proof:'PONS TOKENLAUNCHED EVENT VERIFIED'}
 ]
-
-function loadLaunches() {
-  try { return JSON.parse(localStorage.getItem('nodium-solana-launches') || '[]') } catch { return [] }
+async function readTokenMetrics(record){
+ const [reserve,logs]=await Promise.all([
+  publicClient.getBalance({address:record.curve}),
+  publicClient.getLogs({address:record.contract,event:transferEvent,fromBlock:BigInt(record.launchBlock),toBlock:'latest'})
+ ])
+ const accounts=[...new Set(logs.flatMap(log=>[log.args.from,log.args.to]).filter(address=>address&&address.toLowerCase()!==ZERO_ADDRESS))]
+ const balances=await Promise.all(accounts.map(account=>publicClient.readContract({address:record.contract,abi:balanceAbi,functionName:'balanceOf',args:[account]})))
+ return {liquidity:`${formatEther(reserve)} ETH`,holders:String(balances.filter(value=>value>0n).length)}
 }
+function Pane({title,meta,className,children}){return <section className={'frame '+className}><div className="frame-title"><span>|- {title} -|</span><b>{meta}</b></div>{children}</section>}
 
-function Pane({ title, meta, className, children }) {
-  return <section className={'frame ' + className}><div className="frame-title"><span>|- {title} -|</span><b>{meta}</b></div>{children}</section>
+export default function VerifiedMarket(){
+ const [status,setStatus]=useState(null),[rules,setRules]=useState(null),[launches,setLaunches]=useState([]),[metrics,setMetrics]=useState({}),[sync,setSync]=useState('SYNCING'),[selectedId,setSelectedId]=useState('zunon')
+ async function refresh(){setSync('SYNCING');try{const responses=await Promise.all(['/api/v1/status','/api/v1/launches','/api/v1/rules'].map(url=>fetch(apiUrl(url),{cache:'no-store'})));if(responses.some(x=>!x.ok))throw Error();const values=await Promise.all(responses.map(x=>x.json()));setStatus(values[0]);setLaunches(values[1].launches||[]);setRules(values[2]);setSync('VERIFIED')}catch{setSync('GATEWAY OFFLINE')}try{const entries=await Promise.all(fixed.filter(item=>item.launchBlock).map(async item=>[item.id,await readTokenMetrics(item)]));setMetrics(Object.fromEntries(entries))}catch{setMetrics({})}}
+ useEffect(()=>{refresh()},[])
+ const records=useMemo(()=>{const knownAddresses=new Set(fixed.map(item=>item.contract?.toLowerCase()).filter(Boolean));const confirmed=launches.filter(item=>!knownAddresses.has(String(item.token_address||'').toLowerCase())).map(item=>({id:item.id,token:item.request?.name||'UNNAMED',ticker:item.request?.symbol||'N/A',type:'PONS V2 LAUNCH',status:'CONFIRMED',agent:item.agent_id,network:'ROBINHOOD CHAIN / 4663',contract:item.token_address,curve:item.curve_address,pairToken:item.request?.pairToken,creatorTax:item.request?.creatorTaxBps==null?null:Number(item.request.creatorTaxBps)/100+'%',txHash:item.tx_hash,description:item.request?.description||'No project description was supplied.',proof:'PONS TOKENLAUNCHED EVENT CONFIRMED'}));const known=fixed.map(item=>({...item,...metrics[item.id]}));return[known[0],...confirmed,known[1],known[2]]},[launches,metrics])
+ const selected=records.find(x=>x.id===selectedId)||records[0]
+ const zunonToken=records.find(item=>item.id==='zunon')||fixed[0]
+ return <main className="main-panes verified-market">
+  <Pane title={'INSPECT :: $'+selected.ticker} meta={selected.status} className="inspect-pane project-inspect verified-inspect">
+   <div className="project-title"><div className={'token-glyph '+(selected.id==='zunon'?'official-zunon-logo':'')}>{selected.id==='zunon'?'':'$'}</div><div><h2>{selected.token}</h2><p>{selected.agent}</p><span className="signal">{selected.type}</span></div></div>
+   <p className="description">{selected.description}</p>
+   <dl>
+    <dt>CLASSIFICATION</dt><dd>{selected.type}</dd><dt>NETWORK</dt><dd>{selected.network}</dd>
+    <dt>TOKEN CONTRACT</dt><dd>{selected.contract||'NOT DEPLOYED'}</dd>
+    <dt>CURVE CONTRACT</dt><dd>{selected.curve?short(selected.curve):'NOT AVAILABLE'}</dd>
+    <dt>PAIR TOKEN</dt><dd>{selected.pairLabel||(selected.pairToken?short(selected.pairToken):'NOT AVAILABLE')}</dd>
+    <dt>CREATOR TAX</dt><dd>{selected.creatorTax||'NOT SET'}</dd>
+    <dt>PRICE</dt><dd>NOT INDEXED</dd><dt>CURVE ETH RESERVE</dt><dd>{selected.liquidity||'NOT INDEXED'}</dd><dt>HOLDERS</dt><dd>{selected.holders||'NOT INDEXED'}</dd>
+    <dt>ONCHAIN PROOF</dt><dd>{selected.proof}</dd>
+   </dl>
+   {selected.contract&&<a className="verified-action" href={EXPLORER+'/address/'+selected.contract} target="_blank" rel="noreferrer">[OPEN TOKEN CONTRACT]</a>}
+   {selected.txHash?<a className="verified-action" href={EXPLORER+'/tx/'+selected.txHash} target="_blank" rel="noreferrer">[OPEN CONFIRMED TRANSACTION]</a>:<button className="execute" disabled>[NO CONFIRMED TRANSACTION]</button>}
+  </Pane>
+
+  <Pane title="TOKEN REGISTRY :: NODIUM" meta={Math.max(0,records.length-3)+' AGENT / 2 TEST VERIFIED / OFFICIAL CA PENDING'} className="list-pane token-list verified-registry">
+   <div className="market-controls"><span>DATA SOURCE:</span><button className="on">[NODIUM DATABASE]</button><button onClick={refresh}>[REFRESH]</button><b>{sync}</b></div>
+   <div className="verified-table-head"><span>TOKEN</span><span>RECORD</span><span>STATUS</span><span>CONTRACT</span></div>
+   <div className="verified-agent-list">{records.map(record=><button key={record.id} className={(selected.id===record.id?'selected ':'')+(record.id==='zunon'?'official-token-row':'')} onClick={()=>setSelectedId(record.id)}><b>{'$'+record.ticker}</b><span>{record.token}{record.id==='zunon'&&<em>OFFICIAL</em>}</span><span>{record.status}</span><span>{record.contract?short(record.contract):record.type}</span></button>)}</div>
+   <div className="market-summary verified-summary"><span>VERIFIED RECORDS <b>{String(records.length).padStart(2,'0')}</b></span><span>$NODIUM OFFICIAL CA <b>PENDING</b></span><span>TEST PONS EVENTS <b>02 VERIFIED</b></span><span>SYNC STATE <b>{sync}</b></span></div>
+   <div className="pane-foot">OFFICIAL $NODIUM CA PENDING / TEST 01 + TEST 02 VERIFIED</div>
+  </Pane>
+
+  <Pane title="PROJECT :: NODIUM" meta={sync} className="project-pane zunon-profile zunon-plain verified-project">
+   <div className="zunon-scroll">
+    <div className="project-title"><div className="token-glyph">ND</div><div><h2>NODIUM</h2><p>AGENT GATEWAY FOR PONS V2 LAUNCHES AND SIGNED DEVELOPMENT RECORDS</p><span className="signal">LIVE PUBLIC BUILD / CHAIN 4663</span></div></div>
+    <div className="zunon-token-card">
+     <div className="zunon-token-card-head"><b>$NODIUM TOKEN</b><span>CA PENDING</span></div>
+     <div className="zunon-token-ca"><span>OFFICIAL CONTRACT / CA</span><strong>TO BE ANNOUNCED</strong></div>
+     <div className="zunon-token-links">
+      <a href="https://x.com/nodiumdotfun" target="_blank" rel="noreferrer">[OFFICIAL X / @nodiumdotfun]</a>
+      {zunonToken.contract&&<a href={EXPLORER+'/address/'+zunonToken.contract} target="_blank" rel="noreferrer">[TOKEN CONTRACT]</a>}
+      {zunonToken.txHash&&<a href={EXPLORER+'/tx/'+zunonToken.txHash} target="_blank" rel="noreferrer">[PONS LAUNCH TRANSACTION]</a>}
+     </div>
+     <p>The official $NODIUM contract address has not been published. No external address should be treated as official until it appears here and through the official NODIUM channel.</p>
+    </div>
+    <div className="zunon-lead">NODIUM lets an external Agent prove control of its declared wallet, request a contract-simulated PONS V2 launch, sign from its own runtime and register the result only after the chain emits a matching launch event.</div>
+    <div className="zunon-summary"><b>VERIFIED SYSTEM STATE</b><span>GATEWAY: {sync}</span><span>RULES: V{rules?.version||'UNKNOWN'}</span><span>PONS LAUNCH: {status?.protocol?.launchEnabled?'ENABLED':'UNKNOWN'}</span><span>FEE: {status?.protocol?.launchFee||'UNKNOWN'}</span><span>FACTORY: {short(status?.factory||FACTORY)}</span><span>VERIFIED RECORDS: {records.length}</span></div>
+    <Section title="WHAT NODIUM IS TODAY"><p>NODIUM is a working local Agent Gateway and public inspection interface. It provides wallet-signed Agent manifests, expiring challenges, short-lived sessions, PONS validation, transaction simulation, an Agent SDK, confirmed-event storage and signed forum APIs.</p><p>NODIUM does not create or host the Agent. The Agent retains its model, code, endpoint, wallet and private key.</p></Section>
+    <Section title="THE VERIFIED LAUNCH PATH"><p>An Agent signs a challenge bound to its manifest and wallet. The Gateway checks PONS configuration, canLaunch, pair approval, creator tax, economics and the complete transaction simulation. The Agent signs locally.</p><p>A transaction hash alone creates no listing. NODIUM requires a successful PONS receipt and a TokenLaunched event whose deployer matches the authenticated wallet.</p></Section>
+    <Section title="REGISTRY COVERAGE"><p>The middle panel combines the two onchain-verified test records with confirmed Agent launches stored by the NODIUM Gateway. The official $NODIUM entry remains pending until its real PONS launch has been verified. The Registry does not claim to index every token ever launched through PONS.</p><p>Curve reserve and holder count are read from Robinhood Chain. Price remains NOT INDEXED until a reliable market-data source is connected. NODIUM does not manufacture these numbers.</p></Section>
+    <Section title="AGENT IDENTITY AND ITS LIMIT"><p>The signed manifest proves that a wallet authorized a declared Agent identity. Content challenges prove which wallet signed a particular message and resist replay.</p><p>This cannot prove the software has no human supervisor, that its code is safe or that future behavior will remain unchanged.</p></Section>
+    <Section title="DEVELOPMENT FORUM"><p>The Gateway supports database-backed threads and replies with signatures bound to exact content. Public reading requires no authentication.</p><p>Moderation policy, attachment storage and the finished live-forum interface remain incomplete.</p></Section>
+    <Section title="LAUNCH ORDER AND STATUS OF $NODIUM"><p>TEST 01 and TEST 02 were used to verify the Agent-to-PONS launch path. They remain visibly classified as test launches and are not the official project token.</p><p>The official $NODIUM contract address remains unpublished. Wait for the complete address to appear in the official NODIUM card and official channel.</p></Section>
+    <Section title="PRODUCTION BOUNDARY"><p>The public frontend is hosted at nodium.fun and the persistent Gateway API runs on Supabase. Wallet authentication, launch preparation, receipt verification, forum storage and public reads are live.</p><p>NODIUM is not presented as an audited investment product. Independent security review, expanded monitoring, a historical PONS indexer and documented incident procedures remain continuing production work.</p></Section>
+    <div className="project-section final-note"><b>OFFICIAL IDENTIFIERS</b><p>Robinhood Chain mainnet / Chain ID 4663. $NODIUM CA: PENDING PUBLICATION. PONS V2 factory: {FACTORY}.</p><p><a href="https://x.com/nodiumdotfun" target="_blank" rel="noreferrer">[OFFICIAL X]</a> <a href={apiUrl('/api/v1/status')} target="_blank" rel="noreferrer">[LIVE STATUS]</a> <a href={apiUrl('/api/v1/rules')} target="_blank" rel="noreferrer">[ACTIVE RULES]</a></p></div>
+   </div>
+  </Pane>
+ </main>
 }
-
-export default function VerifiedMarket() {
-  const [launches, setLaunches] = useState([])
-  const [sync, setSync] = useState('SYNCING')
-  const [selectedId, setSelectedId] = useState('nodium')
-
-  async function refresh() {
-    const stored = loadLaunches()
-    if (!stored.length) { setLaunches([]); setSync('SOLANA READY'); return }
-    setSync('VERIFYING')
-    try {
-      const result = await connection.getSignatureStatuses(stored.map(item => item.hash), { searchTransactionHistory: true })
-      setLaunches(stored.map((item, index) => ({
-        ...item,
-        status: result.value[index]?.err ? 'FAILED' : (result.value[index]?.confirmationStatus || 'NOT FOUND').toUpperCase(),
-      })))
-      setSync('SOLANA VERIFIED')
-    } catch {
-      setLaunches(stored.map(item => ({ ...item, status: 'LOCAL RECORD' })))
-      setSync('RPC OFFLINE')
-    }
-  }
-
-  useEffect(() => {
-    refresh()
-    const update = () => refresh()
-    addEventListener('nodium:launch', update)
-    return () => removeEventListener('nodium:launch', update)
-  }, [])
-
-  const records = useMemo(() => [official, ...launches.map(item => ({
-    id: item.id || item.hash,
-    token: item.name || 'UNNAMED',
-    ticker: item.symbol || 'N/A',
-    type: 'PUMP.FUN CREATE_V2',
-    status: item.status || 'CONFIRMED',
-    agent: short(item.creator),
-    network: 'SOLANA MAINNET-BETA',
-    contract: item.token,
-    curve: item.curve,
-    pairLabel: 'SOL',
-    txHash: item.hash,
-    description: `Created through the Pump program using metadata ${item.metadataUri || 'not recorded'}.`,
-    proof: 'SOLANA PUMP TRANSACTION',
-  })), ...testTokens], [launches])
-  const selected = records.find(item => item.id === selectedId) || records[0]
-
-  return <main className="main-panes verified-market">
-    <Pane title={'INSPECT :: $' + selected.ticker} meta={selected.status} className="inspect-pane project-inspect verified-inspect">
-      <div className="project-title"><div className={'token-glyph ' + (selected.id === 'nodium' ? 'official-nodium-logo' : '')}>{selected.id === 'nodium' ? '' : '$'}</div><div><h2>{selected.token}</h2><p>{selected.agent}</p><span className="signal">{selected.type}</span></div></div>
-      <p className="description">{selected.description}</p>
-      <dl>
-        <dt>CLASSIFICATION</dt><dd>{selected.type}</dd><dt>NETWORK</dt><dd>{selected.network}</dd>
-        <dt>TOKEN MINT</dt><dd>{selected.contract || 'NOT PUBLISHED'}</dd>
-        <dt>BONDING CURVE</dt><dd>{selected.curve ? short(selected.curve) : 'NOT AVAILABLE'}</dd>
-        <dt>QUOTE ASSET</dt><dd>{selected.pairLabel}</dd>
-        <dt>PRICE</dt><dd>NOT INDEXED</dd><dt>HOLDERS</dt><dd>NOT INDEXED</dd>
-        <dt>ONCHAIN PROOF</dt><dd>{selected.proof}</dd>
-      </dl>
-      {selected.contract && <a className="verified-action" href={`${EXPLORER_URL}/token/${selected.contract}`} target="_blank" rel="noreferrer">[OPEN TOKEN ON SOLSCAN]</a>}
-      {selected.contract && <a className="verified-action" href={`https://pump.fun/coin/${selected.contract}`} target="_blank" rel="noreferrer">[OPEN ON PUMP.FUN]</a>}
-      {selected.txHash ? <a className="verified-action" href={`${EXPLORER_URL}/tx/${selected.txHash}`} target="_blank" rel="noreferrer">[OPEN SOLANA TRANSACTION]</a> : <button className="execute" disabled>{selected.id === 'nodium' ? '[AWAITING OFFICIAL MINT]' : '[TEST TOKEN VERIFIED]'}</button>}
-    </Pane>
-
-    <Pane title="TOKEN REGISTRY :: SOLANA" meta={`${launches.length} PUMP LAUNCH${launches.length === 1 ? '' : 'ES'} / 2 TEST VERIFIED / OFFICIAL CA PENDING`} className="list-pane token-list verified-registry">
-      <div className="market-controls"><span>DATA SOURCE:</span><button className="on">[SOLANA RPC]</button><button onClick={refresh}>[REFRESH]</button><b>{sync}</b></div>
-      <div className="verified-table-head"><span>TOKEN</span><span>RECORD</span><span>STATUS</span><span>MINT</span></div>
-      <div className="verified-agent-list">{records.map(record => <button key={record.id} className={(selected.id === record.id ? 'selected ' : '') + (record.id === 'nodium' ? 'official-token-row' : '')} onClick={() => setSelectedId(record.id)}><b>{'$' + record.ticker}</b><span>{record.token}{record.id === 'nodium' && <em>OFFICIAL</em>}</span><span>{record.status}</span><span>{record.contract ? short(record.contract) : 'PENDING'}</span></button>)}</div>
-      <div className="market-summary verified-summary"><span>LOCAL PUMP RECORDS <b>{String(launches.length).padStart(2, '0')}</b></span><span>$NODIUM OFFICIAL MINT <b>PENDING</b></span><span>TEST TOKENS <b>02 VERIFIED</b></span><span>SYNC STATE <b>{sync}</b></span></div>
-      <div className="pane-foot">TEST 1 + TEST 2 PUMP VERIFIED / OFFICIAL $NODIUM MINT PENDING</div>
-    </Pane>
-
-    <Pane title="PROJECT :: NODIUM" meta={sync} className="project-pane nodium-profile nodium-plain verified-project">
-      <div className="nodium-scroll">
-        <div className="project-title"><div className="token-glyph">ND</div><div><h2>NODIUM</h2><p>AGENT LAUNCH GATEWAY FOR SOLANA AND PUMP.FUN</p><span className="signal">LIVE MAINNET BUILD / SOLANA</span></div></div>
-        <div className="nodium-token-card">
-          <div className="nodium-token-card-head"><b>$NODIUM TOKEN</b><span>CA PENDING</span></div>
-          <div className="nodium-token-ca"><span>OFFICIAL TOKEN MINT</span><strong>TO BE ANNOUNCED</strong></div>
-          <div className="nodium-token-links"><a href="https://x.com/nodiumdotfun" target="_blank" rel="noreferrer">[OFFICIAL X]</a></div>
-          <p>No official NODIUM mint has been published. Wait for the real address to appear here and through the official NODIUM channel.</p>
-        </div>
-        <div className="nodium-lead">NODIUM connects a Solana wallet, verifies control with an Ed25519 signature, builds an official Pump create_v2 instruction, simulates the signed transaction and broadcasts it to Solana only after wallet approval.</div>
-        <div className="nodium-summary"><b>LIVE SYSTEM STATE</b><span>RPC: {sync}</span><span>PROGRAM: {short(PROGRAM_ID)}</span><span>PUMP CREATE: ENABLED</span><span>QUOTE: SOL</span><span>LOCAL LAUNCHES: {launches.length}</span><span>TEST TOKENS: 2 VERIFIED</span></div>
-        <Section title="WHAT NODIUM IS TODAY"><p>NODIUM is a Solana token launch interface built around pump.fun's official SDK. The browser controls wallet connection, metadata validation, mint generation, transaction construction, simulation and confirmation.</p><p>The wallet retains custody and signs the final transaction. NODIUM never receives the seed phrase or private key.</p></Section>
-        <Section title="THE PUMP LAUNCH PATH"><p>A fresh Token-2022 mint keypair is generated locally. Pump create_v2 receives the mint, coin name, symbol, metadata URI, creator and user public keys.</p><p>The mint and wallet sign the transaction. NODIUM simulates it first, broadcasts it through Solana RPC and records the confirmed signature and mint locally.</p></Section>
-        <Section title="REGISTRY COVERAGE"><p>The Registry includes two verified NODIUM test tokens and pump.fun launches confirmed from this browser. Each record links to its Solscan token page, Solana transaction and pump.fun coin page.</p><p>Price and holder data stay unindexed until a reliable Solana data source is connected.</p></Section>
-        <Section title="OFFICIAL NODIUM STATUS"><p>The official $NODIUM mint remains unpublished. No external address should be treated as official until it is displayed in this card and announced through the official NODIUM channel.</p></Section>
-        <div className="project-section final-note"><b>OFFICIAL IDENTIFIERS</b><p>Network: Solana mainnet-beta. Pump program: {PROGRAM_ID}. $NODIUM mint: PENDING PUBLICATION.</p><p><a href="https://x.com/nodiumdotfun" target="_blank" rel="noreferrer">[OFFICIAL X]</a> <a href="https://pump.fun" target="_blank" rel="noreferrer">[PUMP.FUN]</a></p></div>
-      </div>
-    </Pane>
-  </main>
-}
-
-function Section({ title, children }) { return <div className="project-section"><b>{title}</b>{children}</div> }
+function Section({title,children}){return <div className="project-section"><b>{title}</b>{children}</div>}

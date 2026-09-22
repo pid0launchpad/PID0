@@ -1,46 +1,48 @@
-import { NETWORK, PROGRAM_ID } from './pumpfun'
+import { FACTORY_ADDRESS } from './pons'
 
 const short = value => value ? `${value.slice(0, 8)}...${value.slice(-6)}` : 'NOT LINKED'
 
 export default function LiveAccessPanel({ session, protocol, protocolError, onConnect, onLaunch }) {
   return (
     <section className="frame access-launch-panel real-access-panel" id="access">
-      <div className="frame-title"><span>|- AGENT :: ACCESS + TOKEN LAUNCH -|</span><b>LIVE PUMP PROGRAM</b></div>
+      <div className="frame-title"><span>|- AGENT :: ACCESS + TOKEN LAUNCH -|</span><b>LIVE CONTRACT</b></div>
       <div className="info-scroll">
         <div className="info-intro">
-          <b>SOLANA MAINNET TOKEN CREATION THROUGH THE OFFICIAL PUMP SDK.</b>
-          <p>The browser checks the deployed Pump program, builds a create_v2 instruction locally, simulates the signed transaction through Solana RPC and broadcasts only after the connected wallet approves it.</p>
+          <b>THIS PANEL NOW SEPARATES WORKING FUNCTIONS FROM PLANNED INFRASTRUCTURE.</b>
+          <p>The browser reads PONS V2 directly from Robinhood Chain. A launch is prepared for the confirmed factory, simulated by the RPC, signed by the connected wallet and broadcast only after the wallet approves it.</p>
         </div>
         <div className="live-protocol-grid">
-          <span>NETWORK</span><b>{NETWORK}</b>
-          <span>PROGRAM</span><b>{short(PROGRAM_ID)}</b>
+          <span>CHAIN</span><b>4663 / ROBINHOOD MAINNET</b>
+          <span>FACTORY</span><b>{short(FACTORY_ADDRESS)}</b>
           <span>RPC READ</span><b>{protocolError ? 'FAILED' : protocol ? 'VERIFIED' : 'LOADING'}</b>
-          <span>CREATE_V2</span><b>{protocol?.enabled ? 'READY' : 'CHECKING'}</b>
-          <span>QUOTE ASSET</span><b>SOL</b>
-          <span>RPC SLOT</span><b>{protocol?.slot || 'READING'}</b>
+          <span>LAUNCH SWITCH</span><b>{protocol ? (protocol.enabled ? 'ENABLED' : 'PAUSED') : 'READING'}</b>
+          <span>FACTORY FEE</span><b>{protocol?.feeLabel || 'READING'}</b>
+          <span>CONFIG</span><b>{protocol ? `0 / ${protocol.config.enabled ? 'ENABLED' : 'DISABLED'}` : 'READING'}</b>
+          <span>CURVE FEE</span><b>{protocol ? `${Number(protocol.config.curveFeeBps) / 100}%` : 'READING'}</b>
           <span>WALLET</span><b>{short(session?.account)}</b>
-          <span>SIGNATURE</span><b>{session ? 'ED25519 VERIFIED' : 'CHECK AFTER LINK'}</b>
+          <span>canLaunch</span><b>{session ? String(session.eligible).toUpperCase() : 'CHECK AFTER LINK'}</b>
         </div>
         {protocolError && <p className="real-error">RPC ERROR: {protocolError}</p>}
         <div className="info-actions">
-          <button onClick={onConnect}>[01] LINK + PROVE SOLANA WALLET</button>
-          <button onClick={onLaunch}>[02] OPEN LIVE PUMP LAUNCH</button>
+          <button onClick={onConnect}>[01] LINK + PROVE WALLET</button>
+          <button onClick={onLaunch}>[02] OPEN LIVE PONS LAUNCH</button>
         </div>
         <div className="info-chapter">
           <b>WHAT IS WORKING NOW</b>
-          <p>Phantom-compatible wallet connection, Ed25519 challenge signing, Pump program checks, mint generation, official SDK instruction building, wallet signing, RPC simulation, broadcasting and confirmation are implemented against Solana mainnet-beta.</p>
+          <p>The wallet connection, Chain ID switch, local signature verification, PONS eligibility check, live protocol reads, quote-token approval check, economics hash retrieval, transaction simulation, wallet submission and receipt tracking are implemented against the confirmed PONS V2 ABI.</p>
         </div>
         <div className="info-chapter">
-          <b>METADATA REQUIREMENT</b>
-          <p>Pump create_v2 accepts a public metadata URI. Upload the image and JSON before launching, then provide an HTTPS, IPFS or Arweave URI. Token names are limited to 32 characters, symbols to 13 and URIs to 200.</p>
+          <b>WHAT THE LAUNCHER WILL REJECT</b>
+          <p>An invalid pair-token address, a token not approved by the factory, a creator tax above the contract's 10% limit, missing token metadata, a paused protocol, an ineligible wallet or any transaction that fails simulation cannot be broadcast through the interface.</p>
         </div>
         <div className="info-chapter">
-          <b>PUMP OPTIONS</b>
-          <p>New coins use SOL as the quote asset. Mayhem mode is optional. Holder rewards are optional and permanent when enabled. Deprecated cashback mode is always disabled.</p>
+          <b>AUTONOMOUS AGENT GATEWAY</b>
+          <p>External Agents can now call /api/v1/auth/challenge, sign the exact one-time message with their manifest wallet, exchange it for a short-lived bearer session, request a simulated PONS transaction, sign and broadcast from their own runtime, and submit the receipt for TokenLaunched verification. NODIUM stores Agent registrations and launch intents in SQLite but never receives the private key.</p>
+          <p>The browser button above is a separate wallet-only mode. The API verifies a wallet-signed Agent identity declaration; no technical system can prove that an Agent has zero human supervision. The development forum remains read-only until its signed-message storage is implemented.</p>
         </div>
         <div className="info-chapter">
           <b>MAINNET SAFETY</b>
-          <p>The final action targets the live Pump program. The new mint key is generated in the browser, the transaction is simulated before broadcast and the wallet retains custody. Cancelling the wallet request sends nothing.</p>
+          <p>The final button targets a live mainnet contract. NODIUM first calls eth_call through contract simulation. If it succeeds, the browser wallet shows the exact transaction for approval. The private key never enters NODIUM, and cancelling the wallet request broadcasts nothing.</p>
         </div>
       </div>
     </section>

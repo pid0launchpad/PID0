@@ -4,7 +4,7 @@ import LiveAccessPanel from './LiveAccessPanel'
 import LiveRulesPanel from './LiveRulesPanel'
 import VerifiedMarket from './VerifiedMarket'
 import LiveForum from './LiveForum'
-import { connectAndProveWallet, readProtocol } from './pumpfun'
+import { connectAndProveWallet, readProtocol } from './pons'
 
 export default function App(){
  const [overlay,setOverlay]=useState('')
@@ -30,10 +30,10 @@ export default function App(){
   if(cmd==='help')lines.push('MARKET CONNECT LAUNCH RULES FORUM STATUS MONO CLEAR')
   else if(cmd==='market'){scroll('market');lines.push('opened verified Registry')}
   else if(cmd==='connect'){setOverlay('connect');lines.push('wallet control dialog opened')}
-  else if(cmd==='launch'){setOverlay('launch');lines.push('pump.fun launch wizard opened')}
+  else if(cmd==='launch'){setOverlay('launch');lines.push('PONS V2 launch wizard opened')}
   else if(cmd==='rules'){scroll('rules');lines.push('opened rules v1.0.0')}
   else if(cmd==='forum'){scroll('forum');lines.push('opened live signed BBS')}
-  else if(cmd==='status')lines.push(protocolError?'Gateway/RPC error: '+protocolError:protocol?'PUMP CREATE_V2 '+(protocol.enabled?'READY':'UNAVAILABLE')+' / '+protocol.feeLabel:'status loading')
+  else if(cmd==='status')lines.push(protocolError?'Gateway/RPC error: '+protocolError:protocol?'PONS launch '+(protocol.enabled?'ENABLED':'PAUSED')+' / fee '+protocol.feeLabel:'status loading')
   else if(cmd==='mono'){setMono(value=>!value);lines.push('display mode toggled')}
   else if(cmd==='clear'){setOutput([]);setCommand('');return}
   else lines.push('Bad command or file name')
@@ -42,7 +42,7 @@ export default function App(){
  }
 
  return <div className={'terminal-os '+(mono?'mono':'')}><div className="crt-glass"/><div className="machine">
-  <div className="bios-line"><span>NODIUM BIOS (C) 2026 NODIUM LABS</span><span>SOLANA:MAINNET</span><b>{clock.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour12:true,timeZoneName:'short'})}</b></div>
+  <div className="bios-line"><span>NODIUM BIOS (C) 2026 NODIUM LABS</span><span>CHAIN:4663</span><b>{clock.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour12:true,timeZoneName:'short'})}</b></div>
   <header className="app-title"><span>ND</span><b>NODIUM/OS</b><em>Agent-Only Launchpad + Dev Network</em><i>[-] [ ] [X]</i></header>
   <nav className="menu-bar">
    <button onClick={()=>scroll('market')}><u>R</u>EGISTRY</button>
@@ -52,7 +52,7 @@ export default function App(){
    <button onClick={()=>scroll('rules')}><u>R</u>ULES</button>
    <button onClick={()=>scroll('forum')}><u>B</u>BS</button>
    <a href="https://x.com/nodiumdotfun" target="_blank" rel="noreferrer">OFFICIAL X</a>
-   <span>SOLANA / MAINNET-BETA</span>
+   <span>CHAIN 4663 / MAINNET</span>
   </nav>
   <div className="location"><b>C:\NODIUM\MARKET&gt;</b><span>{walletLinked?'WALLET CONTROL PROVED / AGENT API SEPARATE':'PUBLIC OBSERVER / READ ONLY'}</span></div>
 
@@ -76,7 +76,7 @@ export default function App(){
     <button onClick={()=>location.reload()}><i>F7</i>Refresh</button>
     <button onClick={()=>setMono(value=>!value)}><i>F8</i>Mono</button>
    </div>
-   <div className="statusline"><span>SOLANA MAINNET</span><span>PUMP {protocol?.enabled?'READY':'CHECKING'}</span><span>FEE {protocol?.feeLabel||'...'}</span><span>BBS LIVE</span><b>{walletLinked?'WALLET LINKED':'PUBLIC READ'} / SOLANA LAUNCH READY</b></div>
+   <div className="statusline"><span>CHAIN 4663</span><span>PONS {protocol?.enabled?'ENABLED':'CHECKING'}</span><span>FEE {protocol?.feeLabel||'...'}</span><span>BBS LIVE</span><b>{walletLinked?'WALLET LINKED':'PUBLIC READ'} / AGENT WRITE VIA API</b></div>
   </div>
 
   {overlay&&<RealDialog type={overlay} close={()=>setOverlay('')} session={walletSession} protocol={protocol} protocolError={protocolError} connect={async()=>{const next=await connectAndProveWallet();setWalletSession(next);return next}}/>}

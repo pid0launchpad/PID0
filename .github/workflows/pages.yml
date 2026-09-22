@@ -26,9 +26,11 @@ jobs:
           node-version: 22
           cache: npm
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Build
         run: npm run build
+        env:
+          VITE_NODIUM_API_ORIGIN: https://xlbvehggulpndgrtumae.supabase.co/functions/v1/zunon-api
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

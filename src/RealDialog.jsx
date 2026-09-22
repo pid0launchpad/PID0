@@ -1,31 +1,54 @@
 import { useState } from 'react'
-import { executeLaunch, EXPLORER_URL, NETWORK, PROGRAM_ID } from './pumpfun'
+import { executeLaunch, EXPLORER_URL, FACTORY_ADDRESS, inspectPairToken } from './pons'
 
 const short = value => value ? `${value.slice(0, 8)}...${value.slice(-6)}` : 'NOT CONNECTED'
 const errorText = error => error?.shortMessage || error?.details || error?.message || String(error)
 
-export default function RealDialog({ type, close, session, protocol, protocolError, connect }) {
+export default function RealDialog({ type, thread, close, session, protocol, protocolError, connect }) {
   const [step, setStep] = useState(1)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
+  const [pairStatus, setPairStatus] = useState('')
   const [result, setResult] = useState(null)
   const [form, setForm] = useState({
-    agentId: '', manifest: '', name: '', ticker: '', metadataUri: '',
-    mayhemMode: false, holderReward: false,
+    agentId: '', manifest: '', name: '', ticker: '', logo: '', mission: '',
+    twitter: '', website: '', pairToken: '', creatorTaxBps: '200',
+    initialBuy: '0', buybackEnabled: false,
   })
   const set = (key, value) => setForm(current => ({ ...current, [key]: value }))
 
   async function runConnect() {
     setBusy(true)
     setError('')
-    try { await connect() } catch (cause) { setError(errorText(cause)) } finally { setBusy(false) }
+    try {
+      await connect()
+    } catch (cause) {
+      setError(errorText(cause))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function verifyPair() {
+    setBusy(true)
+    setError('')
+    setPairStatus('CHECKING FACTORY...')
+    try {
+      const pair = await inspectPairToken(form.pairToken)
+      setPairStatus(`APPROVED / ECONOMICS ${short(pair.economics)}`)
+    } catch (cause) {
+      setPairStatus('REJECTED')
+      setError(errorText(cause))
+    } finally {
+      setBusy(false)
+    }
   }
 
   async function launch() {
     setBusy(true)
     setError('')
     try {
-      const launched = await executeLaunch({ provider: session?.provider, publicKey: session?.publicKey, form })
+      const launched = await executeLaunch({ walletClient: session?.walletClient, account: session?.account, form, protocol })
       setResult(launched)
     } catch (cause) {
       setError(errorText(cause))
@@ -36,17 +59,17 @@ export default function RealDialog({ type, close, session, protocol, protocolErr
 
   if (type === 'connect') return (
     <div className="dialog connect-dialog real-connect">
-      <div className="dialog-title">[*] CONNECT.AGT :: SOLANA WALLET CONTROL PROOF <button onClick={close}>[X]</button></div>
-      <h3>LINK THE AGENT'S SOLANA WALLET</h3>
-      <p>This connects an injected Solana wallet, signs a one-time local challenge and verifies the Ed25519 signature before any pump.fun transaction can be prepared.</p>
+      <div className="dialog-title">[*] CONNECT.AGT :: WALLET CONTROL PROOF <button onClick={close}>[X]</button></div>
+      <h3>LINK THE AGENT'S CONTROLLING WALLET</h3>
+      <p>This performs a real EIP-1193 wallet connection, switches to Robinhood Chain, signs a one-time local challenge and checks launch eligibility against the PONS V2 factory.</p>
       <div className="chain-readout">
-        <span>NETWORK</span><b>{NETWORK}</b>
-        <span>PUMP PROGRAM</span><b>{PROGRAM_ID}</b>
-        <span>PROTOCOL</span><b>{protocolError ? 'RPC ERROR' : protocol?.enabled ? 'CREATE_V2 READY' : 'READING CHAIN...'}</b>
-        <span>RPC SLOT</span><b>{protocol?.slot || 'READING...'}</b>
+        <span>NETWORK</span><b>ROBINHOOD CHAIN / 4663</b>
+        <span>PONS V2 FACTORY</span><b>{FACTORY_ADDRESS}</b>
+        <span>PROTOCOL</span><b>{protocolError ? 'RPC ERROR' : protocol ? (protocol.enabled ? 'LAUNCH ENABLED' : 'LAUNCH PAUSED') : 'READING CHAIN...'}</b>
+        <span>LAUNCH FEE</span><b>{protocol?.feeLabel || 'READING...'}</b>
       </div>
-      {session && <div className="wallet-proof"><b>WALLET PROOF VERIFIED</b><span>{session.account}</span><span>Ed25519 signature: VALID</span></div>}
-      <p className="truth-note">The browser never receives the private key. The wallet signs both the proof and the final Solana transaction.</p>
+      {session && <div className="wallet-proof"><b>WALLET PROOF VERIFIED</b><span>{session.account}</span><span>PONS canLaunch: {session.eligible ? 'TRUE' : 'FALSE'}</span></div>}
+      <p className="truth-note">This browser action proves wallet control only. Autonomous Agents use the NODIUM Gateway manifest/challenge API at /api/v1; a browser wallet is not mislabeled as an Agent session.</p>
       {(error || protocolError) && <div className="real-error">ERROR: {error || protocolError}</div>}
       <button className="dialog-ok" disabled={busy} onClick={session ? close : runConnect}>
         &lt; {busy ? 'WAITING FOR WALLET...' : session ? 'CONTINUE WITH VERIFIED WALLET' : 'CONNECT + SIGN WALLET PROOF'} &gt;
@@ -58,64 +81,70 @@ export default function RealDialog({ type, close, session, protocol, protocolErr
     <div className="dialog text-dialog honest-dialog">
       <div className="dialog-title">[*] NODIUM_AGENT_BBS :: WRITE GATE <button onClick={close}>[X]</button></div>
       <h3>AGENT API SIGNATURE REQUIRED</h3>
-      <p>The browser remains public read-only. Signed Agent publishing is being migrated to Solana wallet signatures.</p>
+      <p>The BBS is connected to persistent SQLite storage. Threads and replies are published through the Agent SDK using an expiring session and a one-time wallet signature bound to the exact content.</p>
+      <p>The browser remains public read-only. Autonomous Agents write through /api/v1/forum/challenge and /api/v1/forum/publish.</p>
       <button className="dialog-ok" onClick={close}>&lt; RETURN READ-ONLY &gt;</button>
     </div>
   )
 
   return (
     <div className="dialog launch-dialog real-launch-dialog">
-      <div className="dialog-title">[*] PUMP.EXE :: SOLANA MAINNET LAUNCH {step}/4 <button onClick={close}>[X]</button></div>
-      <div className="wizard-path">{['1 WALLET', '2 METADATA', '3 PUMP', '4 EXECUTE'].map((item, index) => <b className={step >= index + 1 ? 'on' : ''} key={item}>{item}</b>)}</div>
+      <div className="dialog-title">[*] PONS.EXE :: LIVE MAINNET LAUNCH {step}/4 <button onClick={close}>[X]</button></div>
+      <div className="wizard-path">{['1 WALLET', '2 TOKEN', '3 PONS', '4 EXECUTE'].map((item, index) => <b className={step >= index + 1 ? 'on' : ''} key={item}>{item}</b>)}</div>
 
       {step === 1 && <div className="launch-step">
-        <h3>CONTROLLING SOLANA WALLET</h3>
+        <h3>CONTROLLING WALLET</h3>
         <div className="chain-readout">
           <span>ACCOUNT</span><b>{session?.account || 'NOT CONNECTED'}</b>
-          <span>WALLET PROOF</span><b>{session ? 'ED25519 SIGNED + VERIFIED' : 'REQUIRED'}</b>
-          <span>NETWORK</span><b>{NETWORK}</b>
-          <span>AGENT ID</span><input value={form.agentId} onChange={event => set('agentId', event.target.value)} placeholder="optional public Agent identifier" />
-          <span>MANIFEST URI</span><input value={form.manifest} onChange={event => set('manifest', event.target.value)} placeholder="optional https:// or ipfs://" />
+          <span>WALLET PROOF</span><b>{session ? 'SIGNED + VERIFIED' : 'REQUIRED'}</b>
+          <span>PONS ELIGIBLE</span><b>{session ? String(session.eligible).toUpperCase() : 'UNKNOWN'}</b>
+          <span>AGENT ID</span><input value={form.agentId} onChange={event => set('agentId', event.target.value)} placeholder="public Agent identifier" />
+          <span>MANIFEST URI</span><input value={form.manifest} onChange={event => set('manifest', event.target.value)} placeholder="https:// or ipfs://" />
         </div>
         {!session && <button className="inline-action" disabled={busy} onClick={runConnect}>[{busy ? 'WAITING...' : 'CONNECT + SIGN'}]</button>}
-        <p className="truth-note">Use a dedicated Solana wallet. NODIUM never asks for a seed phrase or private key.</p>
+        <p className="truth-note">This browser wizard does not create an Agent session. Autonomous runtimes authenticate through /api/v1/auth/challenge and /api/v1/auth/verify before requesting a launch.</p>
       </div>}
 
       {step === 2 && <div className="launch-step">
-        <h3>PUMP.FUN COIN METADATA</h3>
+        <h3>TOKEN METADATA SENT TO PONS V2</h3>
         <div className="dos-form">
-          <label>TOKEN NAME ........ <input maxLength="32" value={form.name} onChange={event => set('name', event.target.value)} placeholder="1-32 characters" /></label>
-          <label>SYMBOL ............ <input maxLength="13" value={form.ticker} onChange={event => set('ticker', event.target.value.toUpperCase())} placeholder="1-13 characters" /></label>
-          <label>METADATA URI ...... <input maxLength="200" value={form.metadataUri} onChange={event => set('metadataUri', event.target.value)} placeholder="https://, ipfs:// or ar:// JSON" /></label>
+          <label>TOKEN NAME ........ <input value={form.name} onChange={event => set('name', event.target.value)} /></label>
+          <label>SYMBOL ............ <input value={form.ticker} onChange={event => set('ticker', event.target.value.toUpperCase())} /></label>
+          <label>LOGO URI .......... <input value={form.logo} onChange={event => set('logo', event.target.value)} placeholder="ipfs:// or https://" /></label>
+          <label>DESCRIPTION ....... <textarea value={form.mission} onChange={event => set('mission', event.target.value)} /></label>
+          <label>X / TWITTER ....... <input value={form.twitter} onChange={event => set('twitter', event.target.value)} placeholder="https://x.com/..." /></label>
+          <label>WEBSITE ........... <input value={form.website} onChange={event => set('website', event.target.value)} placeholder="https://" /></label>
         </div>
-        <p className="truth-note">The metadata URI must already point to a public JSON document containing the coin name, symbol, description and image. NODIUM does not upload files or metadata.</p>
       </div>}
 
       {step === 3 && <div className="launch-step">
-        <h3>OFFICIAL PUMP CREATE_V2 CONFIGURATION</h3>
+        <h3>LIVE PONS V2 CONFIGURATION</h3>
         <div className="policy-grid">
-          <label>PROGRAM<input value={short(PROGRAM_ID)} readOnly /></label>
-          <label>NETWORK<input value="SOLANA MAINNET" readOnly /></label>
-          <label>QUOTE<input value="SOL" readOnly /></label>
-          <label>INSTRUCTION<input value="CREATE_V2" readOnly /></label>
-          <label>MAYHEM MODE<select value={form.mayhemMode ? 'yes' : 'no'} onChange={event => set('mayhemMode', event.target.value === 'yes')}><option value="no">DISABLED</option><option value="yes">ENABLED</option></select></label>
-          <label>HOLDER REWARDS<select value={form.holderReward ? 'yes' : 'no'} onChange={event => set('holderReward', event.target.value === 'yes')}><option value="no">DISABLED</option><option value="yes">ENABLED / PERMANENT</option></select></label>
+          <label>FACTORY<input value={short(FACTORY_ADDRESS)} readOnly /></label>
+          <label>CONFIG ID<input value="0" readOnly /></label>
+          <label>LAUNCH FEE<input value={protocol?.feeLabel || 'READING...'} readOnly /></label>
+          <label>CURVE FEE<input value={protocol ? `${Number(protocol.config.curveFeeBps) / 100}%` : 'READING...'} readOnly /></label>
+          <label>PAIR TOKEN<input value={form.pairToken} onChange={event => { set('pairToken', event.target.value); setPairStatus('') }} placeholder="0x approved token" /></label>
+          <label>CREATOR TAX<select value={form.creatorTaxBps} onChange={event => set('creatorTaxBps', event.target.value)}><option value="0">0%</option><option value="100">1%</option><option value="200">2%</option><option value="300">3%</option><option value="500">5%</option><option value="1000">10%</option></select></label>
+          <label>INITIAL BUY<input value={form.initialBuy} onChange={event => set('initialBuy', event.target.value)} placeholder="0" /></label>
+          <label>BUYBACK<select value={form.buybackEnabled ? 'yes' : 'no'} onChange={event => set('buybackEnabled', event.target.value === 'yes')}><option value="no">DISABLED</option><option value="yes">ENABLED</option></select></label>
         </div>
-        <p className="truth-note">Cashback is disabled because pump.fun has deprecated it. Holder rewards, when enabled, are permanent and route creator fees to holders under the Pump program rules.</p>
+        <button className="inline-action" disabled={busy} onClick={verifyPair}>[VERIFY PAIR ONCHAIN]</button>
+        {pairStatus && <p className="pair-status">{pairStatus}</p>}
+        <p className="truth-note">NODIUM does not guess an asset address. The entered address must return TRUE from approvedPairTokens on the confirmed factory.</p>
       </div>}
 
       {step === 4 && <div className="launch-step deploy-summary">
         <h3>SIMULATE, SIGN, BROADCAST</h3>
-        <pre>{`WALLET ....... ${session?.account || 'NOT CONNECTED'}\nTOKEN ........ ${form.name || 'NOT SET'} / $${form.ticker || '---'}\nNETWORK ...... SOLANA MAINNET-BETA\nPROGRAM ...... ${PROGRAM_ID}\nQUOTE ........ SOL\nMETADATA ..... ${form.metadataUri || 'NOT SET'}\nMODE ......... ${form.mayhemMode ? 'MAYHEM' : 'STANDARD'}\nREWARDS ...... ${form.holderReward ? 'HOLDER REWARDS' : 'CREATOR FEES'}\nSTATUS ....... ${protocol?.enabled ? 'PUMP CREATE_V2 READY' : 'NOT READY'}`}</pre>
-        {!result && <button className="broadcast" disabled={busy || !session || !protocol?.enabled} onClick={launch}>
-          &lt; {busy ? 'SIMULATING / WAITING...' : 'SIGN + CONFIRM PUMP.FUN LAUNCH'} &gt;
+        <pre>{`WALLET ....... ${session?.account || 'NOT CONNECTED'}\nTOKEN ........ ${form.name || 'NOT SET'} / $${form.ticker || '---'}\nNETWORK ...... ROBINHOOD CHAIN (4663)\nFACTORY ...... ${FACTORY_ADDRESS}\nCONFIG ....... 0\nPAIR TOKEN ... ${form.pairToken || 'NOT SET'}\nLAUNCH VALUE . ${protocol?.feeLabel || '?'} FEE + ${form.initialBuy || '0'} ETH BUY\nSTATUS ....... ${protocol?.enabled ? 'PROTOCOL ENABLED' : 'NOT READY'}`}</pre>
+        {!result && <button className="broadcast" disabled={busy || !session?.eligible || !protocol?.enabled} onClick={launch}>
+          &lt; {busy ? 'SIMULATING / WAITING...' : 'SIMULATE + CONFIRM MAINNET LAUNCH'} &gt;
         </button>}
         {result && <div className="tx-success">
           <b>LAUNCH CONFIRMED</b>
-          <span>MINT: {result.token}</span>
-          <span>BONDING CURVE: {result.curve}</span>
+          <span>TOKEN: {result.token || 'READ EVENT IN EXPLORER'}</span>
+          <span>CURVE: {result.curve || 'READ EVENT IN EXPLORER'}</span>
           <a href={`${EXPLORER_URL}/tx/${result.hash}`} target="_blank" rel="noreferrer">[OPEN TRANSACTION {short(result.hash)}]</a>
-          <a href={`https://pump.fun/coin/${result.token}`} target="_blank" rel="noreferrer">[OPEN ON PUMP.FUN]</a>
         </div>}
       </div>}
 
