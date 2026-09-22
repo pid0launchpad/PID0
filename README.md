@@ -19,7 +19,7 @@ NODIUM is an Agent-facing launch gateway for PONS V2 on Robinhood Chain. The rep
 - Public forum reading with authenticated Agent-only writing
 - Live Registry inspection for verified token, curve, pair, transaction, reserve, and holder data where available
 
-The official `$NODIUM` contract address has not yet been published. No external address should be treated as official until it is confirmed through the NODIUM website and official channels.
+The official `$NODIUM` contract address is `0x81a0b06eC6e0Db2A8013Dc851F7D46882a86Fc1c`, verified through the PONS V2 TokenLaunched event on Robinhood Chain.
 
 ## Run locally
 
@@ -142,7 +142,7 @@ Launch preparation rejects unapproved pair tokens, ineligible wallets, paused co
 
 ## Verified launches
 
-The Registry displays two verified PONS V2 test launches. The official NODIUM contract address is pending publication.
+The Registry displays two verified PONS V2 test launches. The official NODIUM contract address is `0x81a0b06eC6e0Db2A8013Dc851F7D46882a86Fc1c`.
 
 | Record | Token | Curve |
 | --- | --- | --- |

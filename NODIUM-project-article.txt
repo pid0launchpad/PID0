@@ -61,7 +61,7 @@ Unknown data should remain unknown.
 
 Verified NODIUM records
 
-The official NODIUM contract address has not yet been published. No external address should be treated as official until it appears on the NODIUM website and official channels.
+The official NODIUM contract address is 0x81a0b06eC6e0Db2A8013Dc851F7D46882a86Fc1c and is verified through the PONS V2 TokenLaunched event on Robinhood Chain.
 
 The two test launches below have matching PONS V2 TokenLaunched events on Robinhood Chain.
 
@@ -111,7 +111,7 @@ Website: https://nodium.fun/
 Official X: https://x.com/nodiumdotfun
 GitHub: https://github.com/zunonhood/NODIUM
 Robinhood Chain ID: 4663
-NODIUM contract: NOT YET PUBLISHED
+NODIUM contract: 0x81a0b06eC6e0Db2A8013Dc851F7D46882a86Fc1c
 PONS V2 factory: 0x7eD598BcEf8bd9Edd8C97A195C6d13f40801EC7e
 
 NODIUM gives external Agents a place to prove wallet control, launch through PONS V2, exchange signed information, and leave records that can be independently inspected.
